@@ -8,43 +8,67 @@ namespace Controller
 {
     public partial class Form1 : Form
     {
-        private Device device;
-        private CartesianCoordinates axes;
+
+        Device d3d;
 
         public Form1()
         {
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
             InitializeComponent();
-            InitializeDevice();
-            InitializeAxes();
+            // Включение обработки сообщений от клавиатуры в окне
+            this.KeyPreview = true;
+            d3d = null;
         }
-
-        private void InitializeDevice()
+        private void Form1_Load(object sender, EventArgs e)
         {
-            PresentParameters presentParams = new PresentParameters();
-            presentParams.Windowed = true;
-            presentParams.SwapEffect = SwapEffect.Discard;
-
-            device = new Device(0, DeviceType.Hardware, this, CreateFlags.HardwareVertexProcessing, presentParams);
+            try
+            {
+                PresentParameters d3dpp = new PresentParameters();
+                d3dpp.BackBufferCount = 1;
+                d3dpp.SwapEffect = SwapEffect.Discard;
+                d3dpp.Windowed = true;
+                d3dpp.MultiSample = MultiSampleType.None;
+                d3dpp.EnableAutoDepthStencil = true;
+                d3dpp.AutoDepthStencilFormat = DepthFormat.D16;
+                d3d = new Device(0, DeviceType.Hardware, this,
+                CreateFlags.SoftwareVertexProcessing, d3dpp);
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(this, exc.Message, "Ошибка инициализации");
+                Close(); // Закрываем окно
+            }
+            
         }
-
-        private void InitializeAxes()
-        {
-            axes = new CartesianCoordinates(device);
-        }
-
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
-            device.BeginScene();
-
-            Matrix worldMatrix = Matrix.Identity;
-            Matrix viewMatrix = Matrix.LookAtLH(new Vector3(0, 0, -10), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-            Matrix projectionMatrix = Matrix.PerspectiveFovLH((float)Math.PI / 4, ClientSize.Width / (float)ClientSize.Height, 1.0f, 100.0f);
-
-            axes.Draw(worldMatrix, viewMatrix, projectionMatrix);
-
-            device.EndScene();
-            device.Present();
+            private void Form1_Paint(object sender, PaintEventArgs e)
+            {
+                d3d.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Green, 1.0f, 0);
+                SetupCamera();
+                //окружность
+                float y = 0;
+                CustomVertex.PositionColored[] verts = new
+                CustomVertex.PositionColored[400];
+                for (int i = 0; i < 400; i++)
+                {
+                    float x = -Convert.ToSingle(Math.Cos(Math.PI / 200 * i));
+                    float z = Convert.ToSingle(Math.Sin(Math.PI / 200 * i));
+                    verts[i].Position = new Vector3(x, y, z);
+                    verts[i].Color = System.Drawing.Color.AliceBlue.ToArgb();
+                }
+                d3d.BeginScene();
+                d3d.VertexFormat = CustomVertex.PositionColored.Format;
+                d3d.DrawUserPrimitives(PrimitiveType.LineStrip, 399, verts);
+                d3d.EndScene();
+                d3d.Present();
+                this.Invalidate();
+            }
+            private void SetupCamera()
+            {
+                d3d.Transform.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4,
+                this.Width / this.Height, 1.0f, 100.0f);
+                d3d.Transform.View = Matrix.LookAtLH(new Vector3(0, 3, 5.0f),
+                new Vector3(), new Vector3(0, 1, 0));
+                d3d.RenderState.Lighting = false;
         }
 
     }
