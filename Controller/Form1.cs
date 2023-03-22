@@ -4,18 +4,23 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace Controller
 {
     public partial class Form1 : Form
     {
         Device d3d;
-        float angle = 0;
+        Mesh cylinder;
+        Material cylinder_material;
+        bool fl = true;
+
         public Form1()
         {
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
             InitializeComponent();
             d3d = null;
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            cylinder = null;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -25,82 +30,131 @@ namespace Controller
                 PresentParameters d3dpp = new PresentParameters();
                 d3dpp.BackBufferCount = 1;
                 d3dpp.SwapEffect = SwapEffect.Discard;
-                d3dpp.Windowed = true;
-                d3dpp.MultiSample = MultiSampleType.None;
-                d3dpp.EnableAutoDepthStencil = true;
-                d3dpp.AutoDepthStencilFormat = DepthFormat.D16;
-                d3d = new Device(0, DeviceType.Hardware, this,
+                d3dpp.Windowed = true; // Выводим графику в окно
+                d3dpp.MultiSample = MultiSampleType.None; // Выключаем антиалиасинг
+                d3dpp.EnableAutoDepthStencil = true; // Разрешаем создание z-буфера
+                d3dpp.AutoDepthStencilFormat = DepthFormat.D16; // Z-буфер в 16 бит
+                d3d = new Device(0, // D3D_ADAPTER_DEFAULT - видеоадаптер по
+                                    // умолчанию
+                DeviceType.Hardware, // Тип устройства - аппаратный ускоритель
+                this, // Окно для вывода графики
                 CreateFlags.SoftwareVertexProcessing, d3dpp);
             }
             catch (Exception exc)
             {
                 MessageBox.Show(this, exc.Message, "Ошибка инициализации");
-                Close(); // Закрываем окно }
+                Close(); // Закрываем окно
             }
+            cylinder = Mesh.Cylinder(d3d, 0.5f, 0.5f, 1.0f, 16, 1);
+            cylinder_material = new Material();
+            cylinder_material.Diffuse = Color.Yellow;
+            cylinder_material.Specular = Color.White;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            // Проверка, нажата ли клавиша
-            if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Right ||
-                e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+            // Перемещение камеры вперед и назад
+            if (e.KeyCode == Keys.Up)
             {
-                // Получение направления перемещения камеры
-                Vector3 direction;
-                if (e.KeyCode == Keys.Left)
-                    direction.X = -1.0f;
-                else if (e.KeyCode == Keys.Right)
-                    direction.X = 1.0f;
-                else if (e.KeyCode == Keys.Up)
-                    direction.Z = 1.0f;
-                else direction.Z = -1.0f;
-
-                // Перемещение камеры на заданное расстояние в указанном направлении
-                //camera.Position += direction * moveSpeed;
-
-                //// Обновление матрицы вида камеры
-                //d3d.Transform.View = Matrix.LookAtLH(camera.Position, camera.Target, camera.UpVector);
+                d3d.Transform.View *= Matrix.Translation(new Vector3(0, 0.1f, 0));
             }
+            else if (e.KeyCode == Keys.Down)
+            {
+                d3d.Transform.View *= Matrix.Translation(new Vector3(0, -0.1f, 0));
+            }
+
+            // Перемещение камеры вправо и влево
+            if (e.KeyCode == Keys.Right)
+            {
+                d3d.Transform.View *= Matrix.Translation(new Vector3(0.1f, 0, 0));
+            }
+            else if (e.KeyCode == Keys.Left)
+            {
+                d3d.Transform.View *= Matrix.Translation(new Vector3(-0.1f, 0, 0));
+            }
+
+            // Перемещение камеры вверх и вниз
+            if (e.KeyCode == Keys.PageUp)
+            {
+                d3d.Transform.View *= Matrix.Translation(new Vector3(0, 0, 0.1f));
+            }
+            else if (e.KeyCode == Keys.PageDown)
+            {
+                d3d.Transform.View *= Matrix.Translation(new Vector3(0, 0, -0.1f));
+            }
+
+            // Поворот камеры вокруг оси Y
+            if (e.KeyCode == Keys.A)
+            {
+                d3d.Transform.View *= Matrix.RotationY(0.1f);
+            }
+            else if (e.KeyCode == Keys.D)
+            {
+                d3d.Transform.View *= Matrix.RotationY(-0.1f);
+            }
+
+            // Поворот камеры вокруг оси X
+            if (e.KeyCode == Keys.W)
+            {
+                d3d.Transform.View *= Matrix.RotationX(0.1f);
+            }
+            else if (e.KeyCode == Keys.S)
+            {
+                d3d.Transform.View *= Matrix.RotationX(-0.1f);
+            }
+
+            Invalidate(); // Перерисовываем окно
         }
 
         private void Form1_Paint(object sender, PaintEventArgs e)
-            {
-                d3d.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Green, 1.0f, 0);
-                SetupCamera();
-                for (double teta = 0; teta <= 2 * Math.PI; teta += 0.1)
-                {
-                    List<CustomVertex.PositionColored> myList =
-                    new List<CustomVertex.PositionColored>();
-                    for (double fi = 0; fi <= 2 * Math.PI; fi += 0.01)
-                    {
-                        float x = Convert.ToSingle(Math.Cos(fi) * Math.Cos(teta));
-                        float y = Convert.ToSingle(Math.Cos(fi) * Math.Sin(teta));
-                        float z = Convert.ToSingle(Math.Sin(fi));
-                        CustomVertex.PositionColored one =
-                        new CustomVertex.PositionColored();
-                        one.Position = new Vector3(x, y, z);
-                        myList.Add(one);
-                    }
-                    d3d.BeginScene();
-                    d3d.VertexFormat = CustomVertex.PositionColored.Format;
-                    CustomVertex.PositionColored[] verts = new CustomVertex.PositionColored[myList.Count];
-                    for (int i = 0; i < myList.Count; i++)
-                        verts[i] = myList[i];
-                    d3d.DrawUserPrimitives(PrimitiveType.LineStrip, verts.Length - 1,
-                    verts);
-                    d3d.EndScene();
-                }
-                d3d.Present();
-                this.Invalidate();
-            }
+        {
+            d3d.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Azure, 1.0f, 0);
+            d3d.BeginScene();
+            SetupProekcii();
+            DrawAxis();
+            d3d.Material = cylinder_material;
+            d3d.Transform.World =
+            Matrix.RotationX((float)Math.PI / 6) *
+            Matrix.Translation(new Vector3(0, 0, 5f));
+            cylinder.DrawSubset(0);
+            d3d.EndScene();
+            //Показываем содержимое дублирующего буфера
+            d3d.Present();
+        }
 
-            private void SetupCamera()
-            {
-                d3d.Transform.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4, this.Width / this.Height, 1.0f, 100.0f);
-                d3d.Transform.View = Matrix.LookAtLH(new Vector3(0, 3, 5.0f), new Vector3(), new Vector3(0, 1, 0));
-                d3d.RenderState.Lighting = false;
-                d3d.Transform.World = Matrix.RotationAxis(new Vector3(1, 0, 1), angle / (float)Math.PI);
-                angle += 0.1f;
-            }
-     } 
+        private void SetupProekcii()
+        {
+            // Устанавливаем параметры источника освещения
+            // Устанавливаем параметры источника освещения
+            d3d.Lights[0].Enabled = true; // Включаем нулевой источник освещения
+            d3d.Lights[0].Diffuse = Color.White; // Цвет источника освещения
+            d3d.Lights[0].Position = new Vector3(0, 0, 0); // Задаем координаты
+            d3d.Transform.Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4,
+            this.Width / this.Height, 1.0f, 50.0f);
+        }
+
+        private void DrawAxis()
+        {
+            // Отключаем использование текущего материала
+            d3d.Material = new Material();
+
+            // Создаем вершины сетки координат
+            CustomVertex.PositionColored[] gridVertices = new CustomVertex.PositionColored[6];
+
+            int axisLen = 10;
+
+            gridVertices[0]= new CustomVertex.PositionColored(new Vector3(0, -axisLen, 0), Color.White.ToArgb());
+            gridVertices[1]= new CustomVertex.PositionColored(new Vector3(0, axisLen, 0), Color.White.ToArgb());
+            gridVertices[0] = new CustomVertex.PositionColored(new Vector3(axisLen, 0, 0), Color.White.ToArgb());
+            gridVertices[1] = new CustomVertex.PositionColored(new Vector3(-axisLen, 0, 0), Color.White.ToArgb());
+            gridVertices[0] = new CustomVertex.PositionColored(new Vector3(0, 0, axisLen), Color.White.ToArgb());
+            gridVertices[1] = new CustomVertex.PositionColored(new Vector3(0, 0, -axisLen), Color.White.ToArgb());
+
+            
+
+            // Рисуем вершины сетки координат
+            d3d.VertexFormat = CustomVertex.PositionColored.Format;
+            d3d.DrawUserPrimitives(PrimitiveType.LineList, 3, gridVertices);
+        }
+    }
 }
