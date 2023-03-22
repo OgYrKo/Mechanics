@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using Font = Microsoft.DirectX.Direct3D.Font;
 
 namespace Controller
 {
@@ -143,18 +143,21 @@ namespace Controller
 
             int axisLen = 10;
 
-            gridVertices[0]= new CustomVertex.PositionColored(new Vector3(0, -axisLen, 0), Color.White.ToArgb());
-            gridVertices[1]= new CustomVertex.PositionColored(new Vector3(0, axisLen, 0), Color.White.ToArgb());
-            gridVertices[0] = new CustomVertex.PositionColored(new Vector3(axisLen, 0, 0), Color.White.ToArgb());
-            gridVertices[1] = new CustomVertex.PositionColored(new Vector3(-axisLen, 0, 0), Color.White.ToArgb());
-            gridVertices[0] = new CustomVertex.PositionColored(new Vector3(0, 0, axisLen), Color.White.ToArgb());
-            gridVertices[1] = new CustomVertex.PositionColored(new Vector3(0, 0, -axisLen), Color.White.ToArgb());
+            //axis y
+            gridVertices[0] = new CustomVertex.PositionColored(new Vector3(0, -axisLen, 0), Color.White.ToArgb());
+            gridVertices[1] = new CustomVertex.PositionColored(new Vector3(0, axisLen, 0), Color.White.ToArgb());
+            //axis x
+            gridVertices[2] = new CustomVertex.PositionColored(new Vector3(axisLen, 0, 0), Color.White.ToArgb());
+            gridVertices[3] = new CustomVertex.PositionColored(new Vector3(-axisLen, 0, 0), Color.White.ToArgb());
+            //axis z
+            gridVertices[4] = new CustomVertex.PositionColored(new Vector3(0, 0, axisLen), Color.White.ToArgb());
+            gridVertices[5] = new CustomVertex.PositionColored(new Vector3(0, 0, -axisLen), Color.White.ToArgb());
 
             
-
             // Рисуем вершины сетки координат
             d3d.VertexFormat = CustomVertex.PositionColored.Format;
-            d3d.DrawUserPrimitives(PrimitiveType.LineList, 3, gridVertices);
+            d3d.DrawUserPrimitives(PrimitiveType.LineList, 6, gridVertices);
         }
+
     }
 }
