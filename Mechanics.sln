@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLabs", "TestLabs\TestLa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controller", "Controller\Controller.csproj", "{516A0988-5F1B-490E-A930-FBA51C50D15F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Volkov", "Volkov", "{62A64558-C88A-4524-9993-465DB4131DCD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kosoyi", "Kosoyi", "{0B70451B-4DBE-4F59-BC9C-8247E7434B3F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +34,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CA0E61F6-6CB2-41DD-80B0-8DAFBAE95DB7} = {62A64558-C88A-4524-9993-465DB4131DCD}
+		{8C99E48C-0B4C-41A2-BAD3-5DCA27FFC955} = {62A64558-C88A-4524-9993-465DB4131DCD}
+		{516A0988-5F1B-490E-A930-FBA51C50D15F} = {0B70451B-4DBE-4F59-BC9C-8247E7434B3F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C4C6E09B-014B-4FAD-BFF5-3DB5F86FD8E5}
