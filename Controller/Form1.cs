@@ -3,6 +3,7 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 using System.Windows.Forms;
 using Font = Microsoft.DirectX.Direct3D.Font;
 
@@ -11,7 +12,9 @@ namespace Controller
     public partial class Form1 : Form
     {
         Device d3d;
+        Element[] elements;
         Element elementCylinder;
+        Element elementCylinder1;
 
         public Form1()
         {
@@ -75,20 +78,59 @@ namespace Controller
         {
             d3d.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Azure, 1.0f, 0);
             d3d.BeginScene();
-            DrawElements();
+
             DrawAxis();
+            DrawElements();
+            
             d3d.EndScene();
             d3d.Present();//Показываем содержимое дублирующего буфера
         }
 
         private void DrawElements()
         {
-            elementCylinder.DrawElement();
+            //elementCylinder.DrawElement();
+            //elementCylinder1.DrawElement();
+            foreach(Element element in elements)
+            {
+                element.DrawElement();
+            }
         }
 
         private void SetElements()
         {
-            elementCylinder = new Element(d3d, new Vector3(0, 0, 5f), new Vector3(0, 1, 5f));
+            elements = new Element[6];
+            float x, y, z;
+            const float offset = 1f;
+            x = y = z = 0;
+
+            for(int i=0; i < 6; i++)
+            {
+                Vector3 startPoint = new Vector3(x, y, z);
+                if (i % 3 == 0)
+                {
+                    y += offset;
+                }
+                else if(i%3 == 1)
+                {
+                    z += offset;
+                }
+                else
+                {
+                    x += offset;
+                }
+
+                elements[i]=new Element(d3d, startPoint, new Vector3(x, y, z), Color.FromArgb(100,150,i*30+15));
+            }
+
+            //elements[0] = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0), Color.Green);
+            //elements[1] = new Element(d3d, new Vector3(0, 1f, 0), new Vector3(0, 1f, 1f), Color.Blue);
+            //elements[2] = new Element(d3d, new Vector3(0, 1f, 1f), new Vector3(1f, 1f, 1f), Color.Red);
+            //elements[3] = new Element(d3d, new Vector3(1f, 1f, 1f), new Vector3(0, 1f, 0), Color.Yellow);
+            //elements[4] = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0), Color.Purple);
+            //elements[5] = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0), Color.Orange);
+
+            //elementCylinder = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0),Color.Green);
+            //elementCylinder1 = new Element(d3d, new Vector3(0, 1f,0), new Vector3(0, 1f, 1f),Color.Blue);
         }
 
         private void StartSetup()
@@ -128,7 +170,7 @@ namespace Controller
             d3d.Lights[0].Enabled = true; // Включаем нулевой источник освещения
             d3d.Lights[0].Diffuse = Color.White; // Цвет источника освещения
             d3d.Lights[0].Direction = new Vector3();
-            d3d.Lights[0].Position = new Vector3(0, 0, -10); // Задаем координаты
+            d3d.Lights[0].Position = new Vector3(0, 0, -5f); // Задаем координаты
         }
 
         private void SetupCamera()
@@ -136,7 +178,7 @@ namespace Controller
             d3d.Transform.Projection = Matrix.PerspectiveFovLH(
                 (float)Math.PI / 4,//высота видимости
                 this.Width / this.Height, //ширина видимости
-                1.0f, 50.0f);//передний и задний план
+                1.0f, 100.0f);//передний и задний план
             d3d.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, -5f), new Vector3(), new Vector3(0, 1, 0));
         }
 
@@ -146,7 +188,7 @@ namespace Controller
             d3d.Material = new Material();
 
             // Создаем вершины сетки координат
-            CustomVertex.PositionColored[] gridVertices = new CustomVertex.PositionColored[10];
+            CustomVertex.PositionColored[] gridVertices = new CustomVertex.PositionColored[8];
 
             int axisLen = 10;
 
@@ -161,17 +203,16 @@ namespace Controller
             gridVertices[5] = new CustomVertex.PositionColored(new Vector3(0, 0, -axisLen), Color.White.ToArgb());
 
 
-            //axis y
-            //gridVertices[6] = new CustomVertex.PositionColored(new Vector3(0, 1, -axisLen), Color.White.ToArgb());
-            //gridVertices[7] = new CustomVertex.PositionColored(new Vector3(0, 1, axisLen), Color.White.ToArgb());
             //axis x
-            gridVertices[8] = new CustomVertex.PositionColored(new Vector3(1, 0, axisLen), Color.White.ToArgb());
-            gridVertices[9] = new CustomVertex.PositionColored(new Vector3(1, 0, -axisLen), Color.White.ToArgb());
+            gridVertices[6] = new CustomVertex.PositionColored(new Vector3(1, 0, axisLen), Color.White.ToArgb());
+            gridVertices[7] = new CustomVertex.PositionColored(new Vector3(1, 0, -axisLen), Color.White.ToArgb());
 
 
             // Рисуем вершины сетки координат
             d3d.VertexFormat = CustomVertex.PositionColored.Format;
-            d3d.DrawUserPrimitives(PrimitiveType.LineList, 10, gridVertices);
+            d3d.Transform.World = Matrix.Translation(new Vector3());
+            // Создаем вершины сетки координат
+            d3d.DrawUserPrimitives(PrimitiveType.LineList, 8, gridVertices);
         }
     }
 }

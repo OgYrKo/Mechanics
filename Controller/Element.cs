@@ -17,14 +17,16 @@ namespace Controller
         private Element prevElement;
         private Vector3 startPoint;
         private Vector3 endPoint;
-        Vector3 elementVector;
-
+        private Vector3 elementVector;
+        private Color color;
         private const float RADIUS = 0.05f;
 
-        public Element(Device device, Vector3 startPoint,Vector3 endPoint)
+        public Element(Device device, Vector3 startPoint,Vector3 endPoint, Color color)
         {
-            SetElement(device, startPoint, endPoint);
+
+            this.color = color;
             this.prevElement = null;
+            SetElement(device, startPoint, endPoint);
         }
         public Element(Device device, Vector3 startPoint, Vector3 endPoint,Element prevElement)
         {
@@ -39,7 +41,6 @@ namespace Controller
             this.endPoint = endPoint;
             SetCylinder();
             SetCylinderMaterial();
-            SetDevice();
         }
 
         private void SetCylinder()
@@ -51,27 +52,35 @@ namespace Controller
         private void SetCylinderMaterial()
         {
             cylinderMaterial = new Material();
-            cylinderMaterial.Diffuse = Color.Yellow;
+            cylinderMaterial.Diffuse = color;//Color.Yellow;
             cylinderMaterial.Specular = Color.White;
         }
 
-        private void SetDevice()
+        private void SetPosition()
         {
-            device.Material = cylinderMaterial;
-            //device.Transform.World *=Matrix.Translation(new Vector3(0,5f,0));
+            Vector3 center = new Vector3(startPoint.X + elementVector.X / 2,
+                                         startPoint.Y + elementVector.Y / 2,
+                                         startPoint.Z + elementVector.Z / 2);
 
-            //device.Transform.World = Matrix.RotationX((float)Math.Acos((double)elementVector.Y / (double)elementVector.Length()))
-            //                          * Matrix.RotationY((float)Math.Acos((double)elementVector.Z / (double)elementVector.Length()))
-            //                          * Matrix.RotationZ((float)Math.Acos((double)elementVector.X / (double)elementVector.Length()))
-            //                          * Matrix.Translation(new Vector3(0,5f,0));
-                                      //* Matrix.Translation(new Vector3(elementVector.X/2, elementVector.Y / 2, elementVector.Z / 2));
+            float theta_x = (float)Math.Atan((double)elementVector.X / (double)elementVector.Z);
+            float theta_y = (float)Math.Atan((double)elementVector.Y / (double)elementVector.Z);
+            float theta_z = (float)Math.Atan((double)elementVector.X / (double)elementVector.Y);
+
+            if (float.IsNaN(theta_x)) theta_x = (float)Math.PI / 2;
+            if (float.IsNaN(theta_y)) theta_y = (float)Math.PI / 2;
+            if (float.IsNaN(theta_z)) theta_z = (float)Math.PI / 2;
+
+            device.Transform.World = Matrix.RotationX(theta_x)
+                                   * Matrix.RotationY(theta_y)
+                                   * Matrix.RotationZ(theta_z)
+                                   * Matrix.Translation(center);
         }
          
         public void DrawElement()
         {
-            SetDevice();
+            device.Material = cylinderMaterial;
+            SetPosition();
             cylinder.DrawSubset(0);
         }
-
     }
 }
