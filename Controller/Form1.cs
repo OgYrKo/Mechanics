@@ -13,18 +13,24 @@ namespace Controller
     {
         Device d3d;
         Element[] elements;
-        Element elementCylinder;
-        Element elementCylinder1;
+        const int numericLimit = 90;
 
         public Form1()
         {
             InitializeComponent();
+            SetLimits();
             d3d = null;
+        }
+
+        private void SetLimits()
+        {
+            numElement1.Minimum = numElement2.Minimum = numElement3.Minimum = numElement4.Minimum = numElement5.Minimum = -numericLimit;
+            numElement1.Maximum = numElement2.Maximum = numElement3.Maximum = numElement4.Maximum = numElement5.Maximum = numericLimit;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            StartSetup();
+            StartSetup(pictureBox1);
             SetupProekcii();
             SetElements();
         }
@@ -81,15 +87,13 @@ namespace Controller
 
             DrawAxis();
             DrawElements();
-            
+
             d3d.EndScene();
             d3d.Present();//Показываем содержимое дублирующего буфера
         }
 
         private void DrawElements()
         {
-            //elementCylinder.DrawElement();
-            //elementCylinder1.DrawElement();
             foreach(Element element in elements)
             {
                 element.DrawElement();
@@ -100,12 +104,12 @@ namespace Controller
         {
             elements = new Element[6];
             float x, y, z;
-            const float offset = 1f;
-            x = y = z = 0;
+            const float offset = -1f;
+            x = y = z = 2f;
 
-            for(int i=0; i < 6; i++)
+            for(int i = elements.Length - 1; i >= 0; i--)
             {
-                Vector3 startPoint = new Vector3(x, y, z);
+                Vector3 endPoint = new Vector3(x, y, z);
                 if (i % 3 == 0)
                 {
                     y += offset;
@@ -118,22 +122,17 @@ namespace Controller
                 {
                     x += offset;
                 }
-
-                elements[i]=new Element(d3d, startPoint, new Vector3(x, y, z), Color.FromArgb(100,150,i*30+15));
+                if(i== elements.Length - 1) elements[i]=new Element(d3d, new Vector3(x, y, z), endPoint);
+                else elements[i] = new Element(d3d, new Vector3(x, y, z), endPoint, elements[i+1]);
             }
 
-            //elements[0] = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0), Color.Green);
-            //elements[1] = new Element(d3d, new Vector3(0, 1f, 0), new Vector3(0, 1f, 1f), Color.Blue);
-            //elements[2] = new Element(d3d, new Vector3(0, 1f, 1f), new Vector3(1f, 1f, 1f), Color.Red);
-            //elements[3] = new Element(d3d, new Vector3(1f, 1f, 1f), new Vector3(0, 1f, 0), Color.Yellow);
-            //elements[4] = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0), Color.Purple);
-            //elements[5] = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0), Color.Orange);
-
-            //elementCylinder = new Element(d3d, new Vector3(0, 0, 0), new Vector3(0, 1f, 0),Color.Green);
-            //elementCylinder1 = new Element(d3d, new Vector3(0, 1f,0), new Vector3(0, 1f, 1f),Color.Blue);
         }
 
-        private void StartSetup()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="renderWindow">like d3d or device</param>
+        private void StartSetup(Control renderWindow)
         {
             try
             {
@@ -147,7 +146,7 @@ namespace Controller
                 d3d = new Device(0, // D3D_ADAPTER_DEFAULT - видеоадаптер по
                                     // умолчанию
                 DeviceType.Hardware, // Тип устройства - аппаратный ускоритель
-                this, // Окно для вывода графики
+                renderWindow, // Окно для вывода графики
                 CreateFlags.SoftwareVertexProcessing, d3dpp);
             }
             catch (Exception exc)
@@ -203,16 +202,42 @@ namespace Controller
             gridVertices[5] = new CustomVertex.PositionColored(new Vector3(0, 0, -axisLen), Color.White.ToArgb());
 
 
-            //axis x
-            gridVertices[6] = new CustomVertex.PositionColored(new Vector3(1, 0, axisLen), Color.White.ToArgb());
-            gridVertices[7] = new CustomVertex.PositionColored(new Vector3(1, 0, -axisLen), Color.White.ToArgb());
-
-
             // Рисуем вершины сетки координат
             d3d.VertexFormat = CustomVertex.PositionColored.Format;
             d3d.Transform.World = Matrix.Translation(new Vector3());
             // Создаем вершины сетки координат
             d3d.DrawUserPrimitives(PrimitiveType.LineList, 8, gridVertices);
+        }
+
+        private void element1RotateBtn_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numElement1.Value, 0);
+        }
+
+        private void element2RotateBtn_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numElement2.Value, 1);
+        }
+
+        private void element3RotateBtn_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numElement3.Value, 2);
+        }
+
+        private void element4RotateBtn_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numElement4.Value, 3);
+        }
+
+        private void element5RotateBtn_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numElement5.Value, 4);
+        }
+
+        private void RotateButton(int degree,int index)
+        {
+            elements[index].Rotate(degree);
+            Invalidate();
         }
     }
 }
