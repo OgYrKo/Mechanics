@@ -121,8 +121,8 @@ namespace Controller
                 {
                     x += offset;
                 }
-                if(i== elements.Length - 1) elements[i]=new Element(d3d, new Vector3(x, y, z), endPoint);
-                else elements[i] = new Element(d3d, new Vector3(x, y, z), endPoint, elements[i+1]);
+                if(i== elements.Length - 1) elements[i]=new Shoulder(d3d, new Vector3(x, y, z), endPoint);
+                else elements[i] = new Shoulder(d3d, new Vector3(x, y, z), endPoint, elements[i+1]);
             }
 
         }

@@ -184,11 +184,11 @@
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(779, 407);
+            this.label4.Location = new System.Drawing.Point(792, 407);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(66, 16);
+            this.label4.Size = new System.Drawing.Size(53, 16);
             this.label4.TabIndex = 13;
-            this.label4.Text = "Element 3";
+            this.label4.Text = "Захват";
             // 
             // element4RotateBtn
             // 
