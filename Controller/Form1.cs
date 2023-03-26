@@ -1,11 +1,8 @@
 ﻿using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Net;
 using System.Windows.Forms;
-using Font = Microsoft.DirectX.Direct3D.Font;
 
 namespace Controller
 {
@@ -13,6 +10,7 @@ namespace Controller
     {
         Device d3d;
         Element[] elements;
+        CustomVertex.PositionColored[] gridVertices;
         const int numericLimit = 90;
 
         public Form1()
@@ -33,6 +31,7 @@ namespace Controller
             StartSetup(pictureBox1);
             SetupProekcii();
             SetElements();
+            SetAxis();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -181,13 +180,10 @@ namespace Controller
             d3d.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, -5f), new Vector3(), new Vector3(0, 1, 0));
         }
 
-        private void DrawAxis()
+        private void SetAxis()
         {
-            // Отключаем использование текущего материала
-            d3d.Material = new Material();
-
             // Создаем вершины сетки координат
-            CustomVertex.PositionColored[] gridVertices = new CustomVertex.PositionColored[8];
+            gridVertices = new CustomVertex.PositionColored[6];
 
             int axisLen = 10;
 
@@ -201,12 +197,17 @@ namespace Controller
             gridVertices[4] = new CustomVertex.PositionColored(new Vector3(0, 0, axisLen), Color.White.ToArgb());
             gridVertices[5] = new CustomVertex.PositionColored(new Vector3(0, 0, -axisLen), Color.White.ToArgb());
 
+        }
 
+        private void DrawAxis()
+        {
+            // Отключаем использование текущего материала
+            d3d.Material = new Material();
             // Рисуем вершины сетки координат
             d3d.VertexFormat = CustomVertex.PositionColored.Format;
             d3d.Transform.World = Matrix.Translation(new Vector3());
             // Создаем вершины сетки координат
-            d3d.DrawUserPrimitives(PrimitiveType.LineList, 8, gridVertices);
+            d3d.DrawUserPrimitives(PrimitiveType.LineList, gridVertices.Length, gridVertices);
         }
 
         private void element1RotateBtn_Click(object sender, EventArgs e)

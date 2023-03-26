@@ -3,9 +3,6 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Controller
 {
@@ -20,33 +17,16 @@ namespace Controller
         public Vector3 startPoint;
         public Vector3 endPoint;
         private Vector3 elementVector;
-        //private Color color;
         private const float RADIUS = 0.05f;
 
         public Element(Device device, Vector3 startPoint,Vector3 endPoint)
         {
-
-            //this.color = color;
             SetElement(device, startPoint, endPoint,null);
         }
+
         public Element(Device device, Vector3 startPoint, Vector3 endPoint,Element nextElement)
         {
             SetElement(device, startPoint, endPoint, nextElement);
-        }
-
-        /// <summary>
-        /// Only for tests
-        /// </summary>
-        /// <param name="device"></param>
-        /// <param name="startPoint"></param>
-        /// <param name="endPoint"></param>
-        /// <param name="nextElement"></param>
-        public Element(Vector3 startPoint, Vector3 endPoint, Element nextElement)
-        {
-            this.startPoint = startPoint;
-            this.endPoint = endPoint;
-            this.nextElement = nextElement;
-            SetElementVector();
         }
 
         private void SetElement(Device device, Vector3 startPoint, Vector3 endPoint, Element nextElement)
@@ -82,17 +62,19 @@ namespace Controller
             nextElement.Rotate(alpha, startPoint, endPoint);
         }
 
-        private void Rotate(Degree alpha, Vector3 A,Vector3 B)
+        private void Rotate(Degree alpha, Vector3 A, Vector3 B)
         {
-            List<Vector3>points=new List<Vector3>();
+            List<Vector3> points = new List<Vector3>();
             points.Add(startPoint);
             points.Add(endPoint);
             Space space = new Space(A, B, points);
             List<Vector3> newPoints = space.Rotate(alpha);
             startPoint = newPoints[0];
             endPoint = newPoints[1];
-            if(nextElement!=null)nextElement.Rotate(alpha,A,B);
+
+            if (nextElement != null) nextElement.Rotate(alpha, A, B);
             SetElementVector();
+            
         }
 
         private void SetPosition()

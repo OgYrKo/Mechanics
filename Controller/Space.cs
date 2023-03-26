@@ -68,6 +68,7 @@ namespace Controller
         {
             return new Vector3((float)(cos_f * point.X + sin_f * point.Z), point.Y, (float)(-sin_f * point.X + cos_f * point.Z));
         }
+
         private Vector3 RotateByZ(Vector3 point, int a)
         {
             double cos, sin;
@@ -96,6 +97,7 @@ namespace Controller
 
             return new Vector3((float)(cos * point.X + sin * point.Y), (float)(-sin * point.X + cos * point.Y), point.Z);
         }
+
         //угол между осью вращения и плоскостью OZ
         private void SetTheta()
         {
@@ -108,7 +110,7 @@ namespace Controller
             }
             else if (B.X < 0)
             {
-                theta = Math.PI - Math.Atan(B.Y / B.X);
+                theta = Math.PI + Math.Atan(B.Y / B.X);
             }
             else
             {
