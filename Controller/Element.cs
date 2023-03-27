@@ -12,8 +12,9 @@ namespace Controller
     {
         void Rotate(Degree alpha);
 
-        void Rotate(Degree alpha, Vector3 A, Vector3 B);
-
         void DrawElement();
+
+        void Rotate(Degree alpha, Vector3 A, Vector3 B);
     }
+
 }

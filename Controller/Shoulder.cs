@@ -6,10 +6,6 @@ using System.Drawing;
 
 namespace Controller
 {
-    using Microsoft.DirectX.Direct3D;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System;
     using Degree = Int32;
 
     internal class Shoulder:Element

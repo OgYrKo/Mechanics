@@ -3,6 +3,7 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace Controller
 {
@@ -22,8 +23,8 @@ namespace Controller
 
         private void SetLimits()
         {
-            numElement1.Minimum = numElement2.Minimum = numElement3.Minimum = numElement4.Minimum = numElement5.Minimum = -numericLimit;
-            numElement1.Maximum = numElement2.Maximum = numElement3.Maximum = numElement4.Maximum = numElement5.Maximum = numericLimit;
+            numBrush.Minimum = numElement1.Minimum = numElement2.Minimum = numElement3.Minimum = numElement4.Minimum = numElement5.Minimum = -numericLimit;
+            numBrush.Maximum = numElement1.Maximum = numElement2.Maximum = numElement3.Maximum = numElement4.Maximum = numElement5.Maximum = numericLimit;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -101,28 +102,31 @@ namespace Controller
 
         private void SetElements()
         {
-            elements = new Element[6];
-            float x, y, z;
-            const float offset = -1f;
-            x = y = z = 2f;
 
-            for(int i = elements.Length - 1; i >= 0; i--)
+            elements = new Element[7];
+            float x, y, z;
+            const float offset = 1f;
+
+            x = y = z = 2f;
+            elements[elements.Length - 1] = new Brush(d3d, new Vector3(x, y, z), new Vector3(x + offset / 2, y , z));
+
+            for (int i = elements.Length - 2; i >= 0; i--)
             {
                 Vector3 endPoint = new Vector3(x, y, z);
                 if (i % 3 == 0)
                 {
-                    y += offset;
+                    y -= offset;
                 }
-                else if(i%3 == 1)
+                else if (i % 3 == 1)
                 {
-                    z += offset;
+                    z -= offset;
                 }
                 else
                 {
-                    x += offset;
+                    x -= offset;
                 }
-                if(i== elements.Length - 1) elements[i]=new Shoulder(d3d, new Vector3(x, y, z), endPoint);
-                else elements[i] = new Shoulder(d3d, new Vector3(x, y, z), endPoint, elements[i+1]);
+                if (i == elements.Length - 1) elements[i] = new Shoulder(d3d, new Vector3(x, y, z), endPoint);
+                else elements[i] = new Shoulder(d3d, new Vector3(x, y, z), endPoint, elements[i + 1]);
             }
 
         }
@@ -235,7 +239,12 @@ namespace Controller
             RotateButton((int)numElement5.Value, 4);
         }
 
-        private void RotateButton(int degree,int index)
+        private void grabButton_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numBrush.Value, 6);
+        }
+
+        private void RotateButton(int degree, int index)
         {
             elements[index].Rotate(degree);
             Invalidate();

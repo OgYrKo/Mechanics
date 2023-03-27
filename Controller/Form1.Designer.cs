@@ -37,9 +37,9 @@
             this.numElement3 = new System.Windows.Forms.NumericUpDown();
             this.element2RotateBtn = new System.Windows.Forms.Button();
             this.element3RotateBtn = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.grabButton = new System.Windows.Forms.Button();
             this.element5RotateBtn = new System.Windows.Forms.Button();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
+            this.numBrush = new System.Windows.Forms.NumericUpDown();
             this.numElement5 = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.element4RotateBtn = new System.Windows.Forms.Button();
@@ -50,7 +50,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numElement1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numBrush)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -143,15 +143,16 @@
             this.element3RotateBtn.UseVisualStyleBackColor = true;
             this.element3RotateBtn.Click += new System.EventHandler(this.element3RotateBtn_Click);
             // 
-            // button1
+            // grabButton
             // 
-            this.button1.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button1.Location = new System.Drawing.Point(1027, 401);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "Rotate";
-            this.button1.UseVisualStyleBackColor = true;
+            this.grabButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.grabButton.Location = new System.Drawing.Point(1027, 401);
+            this.grabButton.Name = "grabButton";
+            this.grabButton.Size = new System.Drawing.Size(75, 23);
+            this.grabButton.TabIndex = 17;
+            this.grabButton.Text = "Rotate";
+            this.grabButton.UseVisualStyleBackColor = true;
+            this.grabButton.Click += new System.EventHandler(this.grabButton_Click);
             // 
             // element5RotateBtn
             // 
@@ -164,13 +165,13 @@
             this.element5RotateBtn.UseVisualStyleBackColor = true;
             this.element5RotateBtn.Click += new System.EventHandler(this.element5RotateBtn_Click);
             // 
-            // numericUpDown4
+            // numBrush
             // 
-            this.numericUpDown4.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numericUpDown4.Location = new System.Drawing.Point(873, 401);
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(120, 22);
-            this.numericUpDown4.TabIndex = 15;
+            this.numBrush.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.numBrush.Location = new System.Drawing.Point(873, 401);
+            this.numBrush.Name = "numBrush";
+            this.numBrush.Size = new System.Drawing.Size(120, 22);
+            this.numBrush.TabIndex = 15;
             // 
             // numElement5
             // 
@@ -246,9 +247,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1148, 559);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.grabButton);
             this.Controls.Add(this.element5RotateBtn);
-            this.Controls.Add(this.numericUpDown4);
+            this.Controls.Add(this.numBrush);
             this.Controls.Add(this.numElement5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.element4RotateBtn);
@@ -274,7 +275,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numElement1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numBrush)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -294,9 +295,9 @@
         private System.Windows.Forms.NumericUpDown numElement3;
         private System.Windows.Forms.Button element2RotateBtn;
         private System.Windows.Forms.Button element3RotateBtn;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button grabButton;
         private System.Windows.Forms.Button element5RotateBtn;
-        private System.Windows.Forms.NumericUpDown numericUpDown4;
+        private System.Windows.Forms.NumericUpDown numBrush;
         private System.Windows.Forms.NumericUpDown numElement5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button element4RotateBtn;
