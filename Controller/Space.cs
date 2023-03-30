@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Controller
 {
+    using Degree = Int32;
     internal class Space
     {
         Vector3 old_A;
@@ -26,7 +27,7 @@ namespace Controller
             SetTheta();
         }
 
-        public List<Vector3> Rotate(int angle)
+        public List<Vector3> Rotate(Degree angle)
         {
             List<Vector3> result = new List<Vector3>();
 
@@ -69,7 +70,7 @@ namespace Controller
             return new Vector3((float)(cos_f * point.X + sin_f * point.Z), point.Y, (float)(-sin_f * point.X + cos_f * point.Z));
         }
 
-        private Vector3 RotateByZ(Vector3 point, int a)
+        private Vector3 RotateByZ(Vector3 point, Degree a)
         {
             double cos, sin;
             if (a % 90 == 0)

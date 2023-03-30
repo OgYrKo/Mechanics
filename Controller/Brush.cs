@@ -14,11 +14,11 @@ namespace Controller
         private Device device;
         private Mesh[] cylinders;
         private Vector3[] cylindersEndPoints;//текущее положение пальцев
-        private Vector3[] cylindersEndPointsDirection;//текущее положение пальцев
+        private Vector3[] cylindersEndPointsDirection;//направление пальцев
         private Material cylinderMaterial;
         private Vector3 startPoint;//точка соприкосновения с плечом
         private Vector3 endPoint;//точка схвата
-        private Vector3 elementVector;
+        private Vector3 elementVector;//координаты текущего вектора
         private const float RADIUS = 0.05f;
         private const int cylindersCount = 3;
         private int sumAlpha = 0;
@@ -62,7 +62,7 @@ namespace Controller
             cylindersEndPoints = new Vector3[cylindersCount];
             cylindersEndPointsDirection = new Vector3[cylindersCount];
 
-            Vector3 newVector = GetPerpendicular(elementVector); // произвольный вектор, перпендикулярный u
+            Vector3 newVector = elementVector.GetPerpendicular(); // произвольный вектор, перпендикулярный u
 
             Space s = new Space(new Vector3(), elementVector, new List<Vector3>() { newVector });
             for (int i = 0; i < cylindersCount; i++)
@@ -72,49 +72,38 @@ namespace Controller
             }
         }
 
-        private Vector3 GetPerpendicular(Vector3 v)
-        {
-            Vector3 perp = new Vector3();
+        
 
-            // Compute a perpendicular vector
-            if (v.X != 0 || v.Y != 0)
-            {
-                perp.X = -v.Y;
-                perp.Y = v.X;
-                perp.Z = 0;
-            }
-            else
-            {
-                perp.X = 0;
-                perp.Y = -v.Z;
-                perp.Z = v.Y;
-            }
-            return perp;
+        //TODO
+        public void GoToPoint(Vector3 point)
+        {
+
         }
 
-        private Vector3 CrossProduct(Vector3 u, Vector3 v)
+        public Degree GoToPoint(Vector3 point, Vector3 O)
         {
-            Vector3 perp = new Vector3();
-
-            perp.X = u.Y * v.Z - u.Z * v.Y;
-            perp.Y = u.Z * v.X - u.X * v.Z;
-            perp.Z = u.X * v.Y - u.Y * v.X;
-
-            return perp;
+            return 0;
         }
-
+        
+        //поворачивает сами пальцы
         public void Rotate(Degree alpha)
         {
             sumAlpha += alpha;
             if (sumAlpha>=0&& sumAlpha <= 90)
             {
-                    Vector3 A = startPoint;
-                    for (int i = 0; i < cylindersEndPoints.Length; i++)
-                    {
-                        Vector3 B = startPoint+CrossProduct(cylindersEndPointsDirection[i]-startPoint, elementVector);
-                        Space s = new Space(A, B, new List<Vector3>() { cylindersEndPoints[i] });
-                        cylindersEndPoints[i] = s.Rotate(-alpha)[0];
-                    }
+                    
+                Vector3 A = startPoint;
+                    
+                for (int i = 0; i < cylindersEndPoints.Length; i++)
+                
+                {
+                    Vector3 B = startPoint+ (cylindersEndPointsDirection[i] - startPoint).CrossProduct(elementVector);
+                    
+                    Space s = new Space(A, B, new List<Vector3>() { cylindersEndPoints[i] });
+                
+                    cylindersEndPoints[i] = s.Rotate(-alpha)[0];
+                    
+                }
                 
             }
             else
@@ -123,6 +112,7 @@ namespace Controller
             }
         }
 
+        //поворачивает захват
         public void Rotate(Degree alpha, Vector3 A, Vector3 B)
         {
             List<Vector3> points = new List<Vector3>();

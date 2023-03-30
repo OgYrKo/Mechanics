@@ -47,6 +47,12 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.goToPointButton = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.xPointTxt = new System.Windows.Forms.TextBox();
+            this.yPointTxt = new System.Windows.Forms.TextBox();
+            this.zPointTxt = new System.Windows.Forms.TextBox();
+            this.setPointButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numElement1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement3)).BeginInit();
@@ -241,11 +247,79 @@
             this.pictureBox1.TabIndex = 18;
             this.pictureBox1.TabStop = false;
             // 
+            // goToPointButton
+            // 
+            this.goToPointButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.goToPointButton.Location = new System.Drawing.Point(957, 512);
+            this.goToPointButton.Name = "goToPointButton";
+            this.goToPointButton.Size = new System.Drawing.Size(75, 23);
+            this.goToPointButton.TabIndex = 19;
+            this.goToPointButton.Text = "Go";
+            this.goToPointButton.UseVisualStyleBackColor = true;
+            this.goToPointButton.Click += new System.EventHandler(this.goToPointButton_Click);
+            // 
+            // label7
+            // 
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(808, 465);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(37, 16);
+            this.label7.TabIndex = 20;
+            this.label7.Text = "Point";
+            // 
+            // xPointTxt
+            // 
+            this.xPointTxt.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.xPointTxt.Location = new System.Drawing.Point(873, 465);
+            this.xPointTxt.Name = "xPointTxt";
+            this.xPointTxt.Size = new System.Drawing.Size(50, 22);
+            this.xPointTxt.TabIndex = 21;
+            this.xPointTxt.Text = "0";
+            this.xPointTxt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.xPointTxt_KeyPress);
+            // 
+            // yPointTxt
+            // 
+            this.yPointTxt.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.yPointTxt.Location = new System.Drawing.Point(943, 465);
+            this.yPointTxt.Name = "yPointTxt";
+            this.yPointTxt.Size = new System.Drawing.Size(50, 22);
+            this.yPointTxt.TabIndex = 22;
+            this.yPointTxt.Text = "0";
+            this.yPointTxt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.yPointTxt_KeyPress);
+            // 
+            // zPointTxt
+            // 
+            this.zPointTxt.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.zPointTxt.Location = new System.Drawing.Point(1013, 465);
+            this.zPointTxt.Name = "zPointTxt";
+            this.zPointTxt.Size = new System.Drawing.Size(50, 22);
+            this.zPointTxt.TabIndex = 23;
+            this.zPointTxt.Text = "0";
+            this.zPointTxt.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.zPointTxt_KeyPress);
+            // 
+            // setPointButton
+            // 
+            this.setPointButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.setPointButton.Location = new System.Drawing.Point(848, 512);
+            this.setPointButton.Name = "setPointButton";
+            this.setPointButton.Size = new System.Drawing.Size(75, 23);
+            this.setPointButton.TabIndex = 24;
+            this.setPointButton.Text = "Set point";
+            this.setPointButton.UseVisualStyleBackColor = true;
+            this.setPointButton.Click += new System.EventHandler(this.setPointButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1148, 559);
+            this.Controls.Add(this.setPointButton);
+            this.Controls.Add(this.zPointTxt);
+            this.Controls.Add(this.yPointTxt);
+            this.Controls.Add(this.xPointTxt);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.goToPointButton);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.grabButton);
             this.Controls.Add(this.element5RotateBtn);
@@ -305,6 +379,12 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button goToPointButton;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox xPointTxt;
+        private System.Windows.Forms.TextBox yPointTxt;
+        private System.Windows.Forms.TextBox zPointTxt;
+        private System.Windows.Forms.Button setPointButton;
     }
 }
 

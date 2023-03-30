@@ -11,7 +11,9 @@ namespace Controller
     {
         Device d3d;
         Element[] elements;
+        Item item;
         CustomVertex.PositionColored[] gridVertices;
+        const float itemRadius = 0.1f;
         const int numericLimit = 90;
 
         public Form1()
@@ -19,6 +21,7 @@ namespace Controller
             InitializeComponent();
             SetLimits();
             d3d = null;
+            item = null;
         }
 
         private void SetLimits()
@@ -82,14 +85,18 @@ namespace Controller
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            d3d.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Azure, 1.0f, 0);
-            d3d.BeginScene();
+            if (d3d != null)
+            {
+                d3d.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Azure, 1.0f, 0);
+                d3d.BeginScene();
 
-            DrawAxis();
-            DrawElements();
+                DrawAxis();
+                DrawItem();
+                DrawElements();
 
-            d3d.EndScene();
-            d3d.Present();//Показываем содержимое дублирующего буфера
+                d3d.EndScene();
+                d3d.Present();//Показываем содержимое дублирующего буфера
+            }
         }
 
         private void DrawElements()
@@ -97,6 +104,14 @@ namespace Controller
             foreach(Element element in elements)
             {
                 element.DrawElement();
+            }
+        }
+
+        private void DrawItem()
+        {
+            if (item != null)
+            {
+                item.Draw();
             }
         }
 
@@ -248,6 +263,51 @@ namespace Controller
         {
             elements[index].Rotate(degree);
             Invalidate();
+        }
+
+        private void goToPointButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void setPointButton_Click(object sender, EventArgs e)
+        {
+            Vector3 point = new Vector3(Convert.ToSingle(xPointTxt.Text), Convert.ToSingle(yPointTxt.Text), Convert.ToSingle(zPointTxt.Text));
+            if (item == null)
+                this.item = new Item(d3d, point, itemRadius);
+            else
+                item.ChangeCenter(point);
+            Invalidate();
+        }
+
+        private void xPointTxt_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            checkCharecter(sender, e);
+        }
+
+        private void yPointTxt_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            checkCharecter(sender, e);
+        }
+
+        private void zPointTxt_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            checkCharecter(sender, e);
+        }
+
+        private void checkCharecter(object sender,KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
+        (e.KeyChar != ','))
+            {
+                e.Handled = true;
+            }
+
+            // only allow one decimal point
+            if ((e.KeyChar == ',') && ((sender as TextBox).Text.IndexOf(',') > -1))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

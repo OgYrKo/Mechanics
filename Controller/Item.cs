@@ -32,7 +32,7 @@ namespace Controller
 
         private void SetMesh()
         {
-            item = Mesh.Sphere(device, radius, 16, 1);
+            item = Mesh.Sphere(device, radius, 20, 20);
         }
 
         private void SetItemMaterial() 

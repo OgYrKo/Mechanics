@@ -15,6 +15,10 @@ namespace Controller
         void DrawElement();
 
         void Rotate(Degree alpha, Vector3 A, Vector3 B);
+
+        void GoToPoint(Vector3 point);
+
+        Degree GoToPoint(Vector3 point, Vector3 O);
     }
 
 }

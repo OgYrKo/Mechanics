@@ -8,7 +8,7 @@ namespace Controller
 {
     using Degree = Int32;
 
-    internal class Shoulder:Element
+    internal class Shoulder : Element
     {
         private Device device;
         private Mesh cylinder;
@@ -55,6 +55,62 @@ namespace Controller
             cylinderMaterial = new Material();
             cylinderMaterial.Diffuse = Color.Yellow;
             cylinderMaterial.Specular = Color.White;
+        }
+
+        public void GoToPoint(Vector3 point)
+        {
+            Rotate(nextElement.GoToPoint(point, startPoint));
+        }
+
+        public Degree GoToPoint(Vector3 point, Vector3 O)
+        {
+            //определить проекции на каждую ось
+            //int planeIndex=GetPlane(in vector);
+
+            //найти ось на которой длина спроэциранного вектора не изменилась
+
+            //спроэцировать на эту ось вектор искомой точки (point)
+
+            //найти угол между двумя векторами
+            return 0;
+
+            //передать в класс параметры вектора вокруг которого нужно крутитт и точки которые крутим
+            //повернуть всю систему так, что бы этот вектор стоял всегда по Y
+
+            //передать точку_цель автоматически перевести ее в новую систему
+
+            //спроэктировать точку цель и первую точку на плоскость xz (возможно xy)
+
+            //узнать угол между вектором к первой переданой точкой и вектором к точке цели
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <returns>-1 при ошибке или индекс координаты вектора (начинается с 0), которая должна быть 0</returns>
+        private int GetPlane(in Vector3 vector)
+        {
+            Vector3 new_vector = vector;
+            new_vector.X = 0;
+            if (new_vector.Length() == vector.Length())
+            {
+                return 0;
+            }
+            new_vector.X=vector.X;
+            new_vector.Y = 0;
+            if (new_vector.Length() == vector.Length())
+            {
+                return 1;
+            }
+            new_vector.Y = vector.Y;
+            new_vector.Z = 0;
+            if (new_vector.Length() == vector.Length())
+            {
+                return 2;
+            }
+            return -1;
         }
 
         public void Rotate(Degree alpha)
