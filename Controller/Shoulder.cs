@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace Controller
 {
-    using Degree = Int32;
+    using Degree = Double;
 
     internal class Shoulder : Element
     {
@@ -57,32 +57,23 @@ namespace Controller
             cylinderMaterial.Specular = Color.White;
         }
 
-        public void GoToPoint(Vector3 point)
+        public Degree GoToPoint(Vector3 point)
         {
-            Rotate(nextElement.GoToPoint(point, startPoint));
+            Degree angle = nextElement.GoToPoint(point, startPoint);
+            return angle;
+            //int rotationCount = Convert.ToInt32(angle);
+            //for(int i = 0; i < rotationCount; i++)
+            //{
+            //    Rotate(1);
+            //}
+            //Rotate(angle - rotationCount);
+            
         }
 
         public Degree GoToPoint(Vector3 point, Vector3 O)
         {
-            //определить проекции на каждую ось
-            //int planeIndex=GetPlane(in vector);
-
-            //найти ось на которой длина спроэциранного вектора не изменилась
-
-            //спроэцировать на эту ось вектор искомой точки (point)
-
-            //найти угол между двумя векторами
-            return 0;
-
-            //передать в класс параметры вектора вокруг которого нужно крутитт и точки которые крутим
-            //повернуть всю систему так, что бы этот вектор стоял всегда по Y
-
-            //передать точку_цель автоматически перевести ее в новую систему
-
-            //спроэктировать точку цель и первую точку на плоскость xz (возможно xy)
-
-            //узнать угол между вектором к первой переданой точкой и вектором к точке цели
-
+            Space s = new Space(O, startPoint, new List<Vector3>() { endPoint, point });
+            return s.GetAngle();
         }
 
         /// <summary>

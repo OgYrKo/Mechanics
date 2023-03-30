@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Controller
 {
-    using Degree = Int32;
+    using Degree = Double;
     internal class Space
     {
         Vector3 old_A;
@@ -75,8 +75,8 @@ namespace Controller
             double cos, sin;
             if (a % 90 == 0)
             {
-                int b = a / 90;
-                if ((b % 2) == 1)
+                Double b = a / 90;
+                if ((b % 2) == 1|| (b % 2) == -1)
                 {
                     cos = 0;
                     if (b % 4 == 1) sin = 1;
@@ -130,6 +130,26 @@ namespace Controller
             if (cos_theta == -2) cos_theta = Math.Cos(theta);
         }
 
+        private Degree ConvertRadianToDegree(double radian) => radian * 180 / Math.PI;
 
+        public Degree GetAngle()
+        {
+            for (int i = 0; i < Points.Count; i++)
+            {
+                Vector3 p = VectorToXZ(Points[i]);
+                p = VectorToOZ(p);
+                p.Z = 0;
+                Points[i] = p;
+            }
+
+            Vector3 newVector = Points[0].CrossProduct(Points[1]);
+            double numerator = newVector.Length();
+            double denominator = Points[0].Length() * Points[1].Length();
+            double sin = numerator / denominator;
+            if (sin > 1) sin = 1;
+            double returnValue = ConvertRadianToDegree(Math.Asin(sin));
+            if (newVector.Z >= 0) returnValue *= -1;
+            return returnValue;
+        }
     }
 }

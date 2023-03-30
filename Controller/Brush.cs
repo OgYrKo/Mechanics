@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Controller
 {
-    using Degree = Int32;
+    using Degree = Double;
 
     internal class Brush : Element
     {
@@ -21,7 +21,7 @@ namespace Controller
         private Vector3 elementVector;//координаты текущего вектора
         private const float RADIUS = 0.05f;
         private const int cylindersCount = 3;
-        private int sumAlpha = 0;
+        private Degree sumAlpha = 0;
 
         public Brush(Device device, Vector3 startPoint, Vector3 endPoint)
         {
@@ -75,9 +75,9 @@ namespace Controller
         
 
         //TODO
-        public void GoToPoint(Vector3 point)
+        public Degree GoToPoint(Vector3 point)
         {
-
+            return 0;
         }
 
         public Degree GoToPoint(Vector3 point, Vector3 O)

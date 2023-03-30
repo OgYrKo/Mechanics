@@ -2,8 +2,11 @@
 using Microsoft.DirectX.Direct3D;
 using System;
 using System.Drawing;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Controller
 {
@@ -15,6 +18,7 @@ namespace Controller
         CustomVertex.PositionColored[] gridVertices;
         const float itemRadius = 0.1f;
         const int numericLimit = 90;
+        const int updateTime = 50;
 
         public Form1()
         {
@@ -267,7 +271,34 @@ namespace Controller
 
         private void goToPointButton_Click(object sender, EventArgs e)
         {
+            
+            GoToPoint();
+        }
 
+       
+        private async void GoToPoint()
+        {
+            await Task.Run(() =>
+            {
+                for (int i = 0; i < elements.Length; i++)
+            {
+                double angle = elements[i].GoToPoint(item.centerPoint);
+                if (angle != 0)
+                {
+                    int rotationCount = Convert.ToInt32(Math.Abs(angle));
+                    int rotationAngle = Convert.ToInt32(angle / rotationCount);
+                    for (int j = 0; j < rotationCount; j++)
+                    {
+                            elements[i].Rotate(rotationAngle);
+                            Thread.Sleep(updateTime);
+                            Invalidate();
+                    }
+                    elements[i].Rotate(angle - rotationAngle * rotationCount);
+                    Invalidate();
+                }
+            }
+
+            });
         }
 
         private void setPointButton_Click(object sender, EventArgs e)
@@ -298,13 +329,17 @@ namespace Controller
         private void checkCharecter(object sender,KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) &&
-        (e.KeyChar != ','))
+        (e.KeyChar != ',')&& (e.KeyChar != '-'))
             {
                 e.Handled = true;
             }
 
             // only allow one decimal point
             if ((e.KeyChar == ',') && ((sender as TextBox).Text.IndexOf(',') > -1))
+            {
+                e.Handled = true;
+            }
+            if ((e.KeyChar == '-') && ((sender as TextBox).Text.IndexOf('-') > -1))
             {
                 e.Handled = true;
             }

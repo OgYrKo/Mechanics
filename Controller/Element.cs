@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace Controller
 {
-    using Degree = Int32;
+    using Degree = Double;
 
     public interface Element
     {
@@ -16,7 +16,7 @@ namespace Controller
 
         void Rotate(Degree alpha, Vector3 A, Vector3 B);
 
-        void GoToPoint(Vector3 point);
+        Degree GoToPoint(Vector3 point);
 
         Degree GoToPoint(Vector3 point, Vector3 O);
     }
