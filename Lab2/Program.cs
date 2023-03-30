@@ -31,7 +31,7 @@ namespace Lab2
                 r[1] = BA.Or(A[i], BA.Not(B[i])) ? 1 : 0;
                 r[2] = BA.And(A[i], BA.Not(B[i])) ? 1 : 0;
                 r[3] = BA.Implication(A[i], BA.Not(B[i])) ? 1 : 0;
-                r[4] = BA.Implication(A[i], BA.Implication(A[i], BA.Not(B[i]))) ? 1 : 0;
+                r[4] = BA.Equivalence(A[i], BA.Implication(A[i], BA.Not(B[i]))) ? 1 : 0;
                 Console.WriteLine($"{(A[i] ? 1:0)}\t\t{(B[i] ? 1 : 0)}\t\t{r[0]}\t\t{r[1]}\t\t{r[2]}\t\t{r[3]}\t\t{r[4]}");
             }
 
