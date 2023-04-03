@@ -134,6 +134,8 @@ namespace Controller
 
         public Degree GetAngle()
         {
+
+            //находим проэкции
             for (int i = 0; i < Points.Count; i++)
             {
                 Vector3 p = VectorToXZ(Points[i]);
@@ -142,21 +144,70 @@ namespace Controller
                 Points[i] = p;
             }
 
-            Vector3 newVector = Points[0].CrossProduct(Points[1]);
-            double numerator = newVector.Length();
-            double denominator = Points[0].Length() * Points[1].Length();
-            double sin = numerator / denominator;
-            if (sin > 1) sin = 1;
-            double returnValue = ConvertRadianToDegree(Math.Asin(sin));
-            if (newVector.Z >= 0) returnValue *= -1;
-            if (sin == 0)
-            {
-                numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
-                double cos = numerator / denominator;
-                if (cos == 0) return 0;
-                else return 180;
-            }
-            return returnValue;
+            float scalar = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
+            float aProjLength = Points[0].Length();
+            float bProjLength = Points[1].Length();
+            float cos = scalar / aProjLength / bProjLength;
+            Vector3 newVector = Vector3.Cross(Points[0], Points[1]);
+
+            double returnValue = Math.Acos(cos) * (180 / Math.PI);
+            if (newVector.Z >= 0) return -returnValue;
+            else return returnValue;
+
+
+
+            //Vector3 newVector = Vector3.Cross(Points[1], Points[0]);
+            //double numerator = newVector.Length();
+            //double denominator = Points[0].Length() * Points[1].Length();
+            //double sin = numerator / denominator;
+            //if (sin > 1) sin = 1;
+            //if (newVector.Z >= 0) sin *= -1;
+            //numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
+            //double cos = numerator / denominator;
+
+            //double returnValue = ConvertRadianToDegree(Math.Asin(sin));
+
+            //if (sin == 0)
+            //{
+            //    numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
+            //    double cos = numerator / denominator;
+            //    if (cos == 1) return 0;
+            //    else return 180;
+            //}
+            //return returnValue;
         }
+        //private double GetAngleBySinAndCos(double sin,double cos)
+        //{
+        //    double angle;
+        //    double angleBySin = Math.Asin(sin);
+        //    double angleByCos = Math.Acos(cos);
+        //    if (sin > 0)
+        //    {
+        //        if(cos> 0)
+        //        {
+        //            angle = angleByCos;
+        //        }
+        //        else
+        //        {
+        //            angle = angleByCos;
+        //        }
+        //    }
+        //    else if (sin < 0)
+        //    {
+        //        if (cos > 0)
+        //        {
+
+        //        }
+        //        else
+        //        {
+
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (cos == 1) return 0;
+        //        else return 180;
+        //    }
+        //}
     }
 }

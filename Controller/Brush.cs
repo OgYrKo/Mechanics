@@ -103,7 +103,7 @@ namespace Controller
                 for (int i = 0; i < cylindersEndPoints.Length; i++)
                 
                 {
-                    Vector3 B = startPoint+ (cylindersEndPointsDirection[i] - startPoint).CrossProduct(elementVector);
+                    Vector3 B = startPoint + Vector3.Cross(cylindersEndPointsDirection[i] - startPoint, elementVector);
                     
                     Space s = new Space(A, B, new List<Vector3>() { cylindersEndPoints[i] });
                 

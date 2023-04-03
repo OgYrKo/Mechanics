@@ -247,9 +247,14 @@ namespace Controller
             RotateButton((int)numElement5.Value, 4);
         }
 
+        private void element6RotateBtn_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numElement5.Value, 5);
+        }
+
         private void grabButton_Click(object sender, EventArgs e)
         {
-            RotateButton((int)numBrush.Value, 6);
+            RotateButton((int)numBrush.Value, 7);
         }
 
         private void RotateButton(double angle, int index)

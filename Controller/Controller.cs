@@ -18,7 +18,7 @@ namespace Controller
         private Brush brush;
         Form form;
         Device device;
-        const int ELEMENTS_COUNT = 6;
+        const int ELEMENTS_COUNT = 7;
         const int ROTATE_FREQUENCY = 1;//на сколько градусов поворачивать за 1 раз
         const int ROTATE_FREQUENCY_TIME = 50;//раз в сколько времени поворачивать (ms)
         Mutex drawMutex;
@@ -38,9 +38,28 @@ namespace Controller
         {
             float x, y, z;
             const float offset = 1f;
+            x = y = z = 0;
 
-            x = y = z = 2f;
-            brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + offset / 2, y, z));
+            for (int i = 0; i < ELEMENTS_COUNT; i++)
+            {
+                if (i % 3 == 0)
+                {
+                    y += offset;
+                }
+                else if (i % 3 == 1)
+                {
+                    z += offset;
+                }
+                else
+                {
+                    x += offset;
+                }
+            }
+
+            brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + (ELEMENTS_COUNT % 3 == 0 ? offset / 2 : 0),
+                                                                        y + (ELEMENTS_COUNT % 3 == 1 ? offset / 2 : 0),
+                                                                        z + (ELEMENTS_COUNT % 3 == 2 ? offset / 2 : 0)));
+            //brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + offset/2, y, z));
 
             for (int i = elements.Length - 1; i >= 0; i--)
             {
@@ -93,6 +112,7 @@ namespace Controller
             Thread thread = new Thread(new ParameterizedThreadStart(Rotate));
             threads.Add(thread);
             thread.Start((index, angle));
+            thread.Join();
         }
 
         public void StopThread()
@@ -121,7 +141,7 @@ namespace Controller
             int angleSign = Convert.ToInt32(angle / Math.Abs(angle));
             //получаем элемент начиная с которого будем поворачивать все последующие
             Element element;
-            if (index == ELEMENTS_COUNT) element = brush;
+            if (index >= ELEMENTS_COUNT) element = brush;
             else element = elements[index];
 
             //выставляем количество поворотв в соответствии с частотой поворота
@@ -149,13 +169,26 @@ namespace Controller
         public void GoToPoint(Vector3 point,ref List<NumericUpDown> numerics)
         {
             double[] angles = new double[ELEMENTS_COUNT];
+            //for (int i = 0; i < ELEMENTS_COUNT; i++)
+            //{
+            //    angles[i] = elements[i].GoToPoint(point);
+            //    if (i < numerics.Count)
+            //    {
+            //        numerics[i].Value = (int)angles[i];
+            //        numerics[i].Enabled = false;
+            //    }
+            //    if (angles[i] == 0) continue;
+            //    Rotate(i, angles[i]);
+            //}
+
+
             for (int i = 0; i < ELEMENTS_COUNT; i++)
             {
                 angles[i] = elements[i].GoToPoint(point);
             }
-            for(int i = 0; i < numerics.Count; i++)
+            for (int i = 0; i < ELEMENTS_COUNT && i < numerics.Count; i++)
             {
-                numerics[i].Value = (int) angles[i];
+                numerics[i].Value = (int)angles[i];
                 numerics[i].Enabled = false;
             }
             for (int i = 0; i < ELEMENTS_COUNT; i++)
