@@ -54,6 +54,7 @@
             this.zPointTxt = new System.Windows.Forms.TextBox();
             this.setPointButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
+            this.resumeButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numElement1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement3)).BeginInit();
@@ -322,11 +323,24 @@
             this.pauseButton.Visible = false;
             this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
             // 
+            // resumeButton
+            // 
+            this.resumeButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.resumeButton.Location = new System.Drawing.Point(957, 511);
+            this.resumeButton.Name = "resumeButton";
+            this.resumeButton.Size = new System.Drawing.Size(75, 23);
+            this.resumeButton.TabIndex = 26;
+            this.resumeButton.Text = "Resume";
+            this.resumeButton.UseVisualStyleBackColor = true;
+            this.resumeButton.Visible = false;
+            this.resumeButton.Click += new System.EventHandler(this.resumeButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1148, 559);
+            this.Controls.Add(this.resumeButton);
             this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.setPointButton);
             this.Controls.Add(this.zPointTxt);
@@ -400,6 +414,7 @@
         private System.Windows.Forms.TextBox zPointTxt;
         private System.Windows.Forms.Button setPointButton;
         private System.Windows.Forms.Button pauseButton;
+        private System.Windows.Forms.Button resumeButton;
     }
 }
 

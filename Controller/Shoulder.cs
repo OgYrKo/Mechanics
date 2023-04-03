@@ -3,6 +3,7 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 
 namespace Controller
 {
@@ -18,6 +19,8 @@ namespace Controller
         private Vector3 endPoint;
         private Vector3 elementVector;
         private const float RADIUS = 0.05f;
+        private Mutex rotateMutex;
+        private Mutex drawMutex;
 
         public Shoulder(Device device, Vector3 startPoint, Vector3 endPoint)
         {
@@ -35,6 +38,8 @@ namespace Controller
             this.startPoint = startPoint;
             this.endPoint = endPoint;
             this.nextElement = nextElement;
+            rotateMutex = new Mutex();
+            drawMutex = new Mutex();
             SetElementVector();
             SetCylinder();
             SetCylinderMaterial();
@@ -61,12 +66,6 @@ namespace Controller
         {
             Degree angle = nextElement.GoToPoint(point, startPoint);
             return angle;
-            //int rotationCount = Convert.ToInt32(angle);
-            //for(int i = 0; i < rotationCount; i++)
-            //{
-            //    Rotate(1);
-            //}
-            //Rotate(angle - rotationCount);
             
         }
 
@@ -111,6 +110,7 @@ namespace Controller
 
         public void Rotate(Degree alpha, Vector3 A, Vector3 B)
         {
+            rotateMutex.WaitOne();
             List<Vector3> points = new List<Vector3>();
             points.Add(startPoint);
             points.Add(endPoint);
@@ -121,7 +121,7 @@ namespace Controller
 
             if (nextElement != null) nextElement.Rotate(alpha, A, B);
             SetElementVector();
-
+            rotateMutex.ReleaseMutex();
         }
 
         private void SetPosition()
@@ -139,9 +139,11 @@ namespace Controller
 
         public void DrawElement()
         {
+            drawMutex.WaitOne();
             device.Material = cylinderMaterial;
             SetPosition();
             cylinder.DrawSubset(0);
+            drawMutex.ReleaseMutex();
         }
 
     }

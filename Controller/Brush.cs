@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 
 namespace Controller
 {
@@ -22,12 +23,16 @@ namespace Controller
         private const float RADIUS = 0.05f;
         private const int cylindersCount = 3;
         private Degree sumAlpha = 0;
+        private Mutex rotateMutex;
+        private Mutex drawMutex;
 
         public Brush(Device device, Vector3 startPoint, Vector3 endPoint)
         {
             this.device = device;
             this.startPoint = startPoint;
             this.endPoint = endPoint;
+            rotateMutex = new Mutex();
+            drawMutex = new Mutex();
             SetElementVector();
             SetCylinders();
             SetCylinderMaterial();
@@ -88,6 +93,7 @@ namespace Controller
         //поворачивает сами пальцы
         public void Rotate(Degree alpha)
         {
+            rotateMutex.WaitOne();
             sumAlpha += alpha;
             if (sumAlpha>=0&& sumAlpha <= 90)
             {
@@ -110,11 +116,13 @@ namespace Controller
             {
                 sumAlpha -= alpha;
             }
+            rotateMutex.ReleaseMutex();
         }
 
         //поворачивает захват
         public void Rotate(Degree alpha, Vector3 A, Vector3 B)
         {
+            rotateMutex.WaitOne();
             List<Vector3> points = new List<Vector3>();
             points.Add(startPoint);
             points.Add(endPoint);
@@ -137,7 +145,7 @@ namespace Controller
                 cylindersEndPointsDirection[i] = newPoints[i + cylindersEndPoints.Length + 2];
 
             SetElementVector();
-
+            rotateMutex.ReleaseMutex();
         }
 
         private void SetPosition(int index)
@@ -157,12 +165,14 @@ namespace Controller
 
         public void DrawElement()
         {
+            drawMutex.WaitOne();
             for (int i = 0; i < cylindersCount; i++)
             {
                 device.Material = cylinderMaterial;
                 SetPosition(i);
                 cylinders[i].DrawSubset(0);
             }
+            drawMutex.ReleaseMutex();
         }
 
     }
