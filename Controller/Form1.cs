@@ -1,6 +1,7 @@
 ﻿using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,23 +16,47 @@ namespace Controller
         Device d3d;
         Element[] elements;
         Item item;
+        List<NumericUpDown> numericUpDownList;
         CustomVertex.PositionColored[] gridVertices;
         const float itemRadius = 0.1f;
-        const int numericLimit = 90;
+        const int numericLimit = 180;
         const int updateTime = 50;
+        Mutex mutex;
+        bool isFirstClick = true;
 
         public Form1()
         {
             InitializeComponent();
-            SetLimits();
+            SetNumElementsList();
             d3d = null;
             item = null;
+            mutex = new Mutex();
         }
 
-        private void SetLimits()
+        private void SetNumElementsList()
         {
-            numBrush.Minimum = numElement1.Minimum = numElement2.Minimum = numElement3.Minimum = numElement4.Minimum = numElement5.Minimum = -numericLimit;
-            numBrush.Maximum = numElement1.Maximum = numElement2.Maximum = numElement3.Maximum = numElement4.Maximum = numElement5.Maximum = numericLimit;
+            numericUpDownList = new List<NumericUpDown>();
+            numericUpDownList.Add(numElement1);
+            numericUpDownList.Add(numElement2);
+            numericUpDownList.Add(numElement3);
+            numericUpDownList.Add(numElement4);
+            numericUpDownList.Add(numElement5);
+
+            foreach (NumericUpDown numericUpDown in numericUpDownList)
+            {
+                numericUpDown.Minimum = -numericLimit;
+                numericUpDown.Maximum = numericLimit;
+            }
+            numBrush.Minimum = -numericLimit;
+            numBrush.Maximum = numericLimit;
+        }
+
+        private void ChangeEnabledElements()
+        {
+            foreach(NumericUpDown numElement in numericUpDownList)
+            {
+                numElement.Enabled = !numElement.Enabled;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -271,34 +296,57 @@ namespace Controller
 
         private void goToPointButton_Click(object sender, EventArgs e)
         {
+
             
-            GoToPoint();
+            pauseButton.Visible = true;
+            if (isFirstClick)
+            {
+                ChangeEnabledElements();
+                isFirstClick = false;
+                GoToPoint();
+            }
+            else
+            {
+                mutex.ReleaseMutex();
+            }
         }
 
-       
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            goToPointButton.Visible = true;
+            pauseButton.Visible = false;
+            mutex.WaitOne();
+        }
+
         private async void GoToPoint()
         {
             await Task.Run(() =>
             {
                 for (int i = 0; i < elements.Length; i++)
-            {
-                double angle = elements[i].GoToPoint(item.centerPoint);
-                if (angle != 0)
                 {
-                    int rotationCount = Convert.ToInt32(Math.Abs(angle));
-                    int rotationAngle = Convert.ToInt32(angle / rotationCount);
-                    for (int j = 0; j < rotationCount; j++)
+                    double angle = elements[i].GoToPoint(item.centerPoint);
+                    numericUpDownList[i].Value = Convert.ToInt32(angle);
+                    if (angle != 0)
                     {
-                            elements[i].Rotate(rotationAngle);
-                            Thread.Sleep(updateTime);
-                            Invalidate();
-                    }
-                    elements[i].Rotate(angle - rotationAngle * rotationCount);
-                    Invalidate();
-                }
-            }
 
+                        int rotationCount = Convert.ToInt32(Math.Abs(angle));
+                        int rotationAngle = Convert.ToInt32(angle / rotationCount);
+                        for (int j = 0; j < rotationCount; j++)
+                        {
+                                mutex.WaitOne();
+                                elements[i].Rotate(rotationAngle);
+                                Thread.Sleep(updateTime);
+                                Invalidate();
+                                mutex.ReleaseMutex();
+                        }
+                        elements[i].Rotate(angle - rotationAngle * rotationCount);
+                        Invalidate();
+                    }
+                }
+                isFirstClick = true;
             });
+            pauseButton.Visible = false;
+            ChangeEnabledElements();
         }
 
         private void setPointButton_Click(object sender, EventArgs e)
@@ -344,5 +392,7 @@ namespace Controller
                 e.Handled = true;
             }
         }
+
+        
     }
 }

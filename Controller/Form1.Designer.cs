@@ -53,6 +53,7 @@
             this.yPointTxt = new System.Windows.Forms.TextBox();
             this.zPointTxt = new System.Windows.Forms.TextBox();
             this.setPointButton = new System.Windows.Forms.Button();
+            this.pauseButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numElement1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement3)).BeginInit();
@@ -309,11 +310,24 @@
             this.setPointButton.UseVisualStyleBackColor = true;
             this.setPointButton.Click += new System.EventHandler(this.setPointButton_Click);
             // 
+            // pauseButton
+            // 
+            this.pauseButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.pauseButton.Location = new System.Drawing.Point(957, 511);
+            this.pauseButton.Name = "pauseButton";
+            this.pauseButton.Size = new System.Drawing.Size(75, 23);
+            this.pauseButton.TabIndex = 25;
+            this.pauseButton.Text = "Pause";
+            this.pauseButton.UseVisualStyleBackColor = true;
+            this.pauseButton.Visible = false;
+            this.pauseButton.Click += new System.EventHandler(this.pauseButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1148, 559);
+            this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.setPointButton);
             this.Controls.Add(this.zPointTxt);
             this.Controls.Add(this.yPointTxt);
@@ -385,6 +399,7 @@
         private System.Windows.Forms.TextBox yPointTxt;
         private System.Windows.Forms.TextBox zPointTxt;
         private System.Windows.Forms.Button setPointButton;
+        private System.Windows.Forms.Button pauseButton;
     }
 }
 

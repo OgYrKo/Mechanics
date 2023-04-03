@@ -149,6 +149,13 @@ namespace Controller
             if (sin > 1) sin = 1;
             double returnValue = ConvertRadianToDegree(Math.Asin(sin));
             if (newVector.Z >= 0) returnValue *= -1;
+            if (sin == 0)
+            {
+                numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
+                double cos = numerator / denominator;
+                if (cos == 0) return 0;
+                else return 180;
+            }
             return returnValue;
         }
     }
