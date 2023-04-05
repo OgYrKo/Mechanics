@@ -24,7 +24,9 @@ namespace Controller
         private const int cylindersCount = 3;
         private Degree sumAlpha = 0;
         private Mutex rotateMutex;
+        private readonly object paralelLock;
         private Mutex drawMutex;
+        private Item item;
 
         public Brush(Device device, Vector3 startPoint, Vector3 endPoint)
         {
@@ -33,6 +35,7 @@ namespace Controller
             this.endPoint = endPoint;
             rotateMutex = new Mutex();
             drawMutex = new Mutex();
+            item = null;
             SetElementVector();
             SetCylinders();
             SetCylinderMaterial();
@@ -77,13 +80,36 @@ namespace Controller
             }
         }
 
-        public bool IsTouch(Item item)
+        public bool IsTouch(Item itemIn)
         {
             // Координаты проверяемой точки
             Vector3 checkPoint = cylindersEndPoints[0];
             // Вычисляем расстояние от точки до центра шара
-            double d= (checkPoint - item.centerPoint).Length();
-            return d <= item.radius;
+            double d= (checkPoint - itemIn.centerPoint).Length();
+            if(d <= itemIn.radius)
+            {
+                AttachItem(itemIn);
+                return true;
+            }
+            else
+            {
+                if (item != null) 
+                    DettachItem();
+                return false;
+            }
+            
+        }
+
+        private bool AttachItem(Item itemIn)
+        {
+            if (this.item != null) return false;
+            this.item = itemIn;
+            return true;
+        }
+        private bool DettachItem()
+        {
+            this.item = null;
+            return true;
         }
 
         public Degree GoToPoint(Vector3 point, Vector3 O)
@@ -117,6 +143,7 @@ namespace Controller
             {
                 sumAlpha -= alpha;
             }
+            if (item != null) IsTouch(item);
             rotateMutex.ReleaseMutex();
         }
 
@@ -146,6 +173,8 @@ namespace Controller
                 cylindersEndPointsDirection[i] = newPoints[i + cylindersEndPoints.Length + 2];
 
             SetElementVector();
+            if(item!=null)
+                item.centerPoint=new Vector3(endPoint.X, endPoint.Y, endPoint.Z);
             rotateMutex.ReleaseMutex();
         }
 

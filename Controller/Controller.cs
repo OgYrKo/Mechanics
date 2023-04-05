@@ -24,12 +24,13 @@ namespace Controller
         const int ROTATE_FREQUENCY_TIME = 1;//частота поворота (ms)
         Mutex drawMutex;
         Mutex paralelMutex;
+        object paralelLock;
         Thread[] threads;
 
         public Controller(Form form, Device device)
         {
             elements = new Shoulder[ELEMENTS_COUNT];
-            threads = new Thread[ELEMENTS_COUNT+1];
+            threads = new Thread[ELEMENTS_COUNT + 1];
             this.form = form;
             this.device = device;
             MutexInit();
@@ -91,11 +92,12 @@ namespace Controller
         {
             drawMutex = new Mutex();
             paralelMutex = new Mutex();
+            paralelLock = new object();
         }
 
         public bool IsWork()
         {
-            for(int i = 0; i < threads.Length; i++)
+            for (int i = 0; i < threads.Length; i++)
             {
                 if (threads[i] != null && threads[i].IsAlive)
                 {
@@ -116,7 +118,7 @@ namespace Controller
             drawMutex.ReleaseMutex();
         }
 
-        public void Rotate(int index,double angle)
+        public void Rotate(int index, double angle)
         {
             threads[index] = new Thread(new ParameterizedThreadStart(Rotate));
             threads[index].Start((index, angle));
@@ -128,7 +130,7 @@ namespace Controller
             if (threads == null) return;
             foreach (Thread t in threads)
             {
-                if(t!=null&&t.IsAlive) t.Suspend();
+                if (t != null && t.IsAlive) t.Suspend();
             }
         }
 
@@ -160,7 +162,7 @@ namespace Controller
             int completeRotationCount = 0;
             for (; completeRotationCount < rotationCount; completeRotationCount++)
             {
-                element.Rotate(angleSign*ROTATE_FREQUENCY);
+                element.Rotate(angleSign * ROTATE_FREQUENCY);
                 form.Invalidate();
                 Thread.Sleep(ROTATE_FREQUENCY_TIME);
             }
@@ -169,7 +171,7 @@ namespace Controller
             double rest = Math.Abs(angle) - rotationCount;
             if (rest > 0)
             {
-                element.Rotate(rest*angleSign);
+                element.Rotate(rest * angleSign);
                 form.Invalidate();
             }
         }
@@ -177,35 +179,39 @@ namespace Controller
         private void ParalelFind(object tuple)
         {
             (Item, List<NumericUpDown>) typedTuple = ((Item, List<NumericUpDown>))tuple;
-            Item item = typedTuple.Item1;
-            List<NumericUpDown> numerics=typedTuple.Item2;
-            while (!Vector3Extencion.Compare(GetEndPoint(), item.centerPoint))
+            lock (paralelLock)
             {
-                for (int i = 0; i < ELEMENTS_COUNT - 1; i++)
+                Item item = typedTuple.Item1;
+                List<NumericUpDown> numerics = typedTuple.Item2;
+                while (!Vector3Extencion.Compare(GetEndPoint(), item.centerPoint))
                 {
-                    paralelMutex.WaitOne();
-                    Vector3 copy = GetEndPoint();
-                    Vector3 endPoint = new Vector3(copy.X, copy.Y, copy.Z);
-                    double angle = elements[i].GoToPoint(item.centerPoint, endPoint);
-                    if (i < numerics.Count)
+                    for (int i = 0; i < ELEMENTS_COUNT - 1; i++)
                     {
-                        numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angle));
+
+                        Vector3 copy = GetEndPoint();
+                        Vector3 endPoint = new Vector3(copy.X, copy.Y, copy.Z);
+                        double angle = elements[i].GoToPoint(item.centerPoint, endPoint);
+                        if (i < numerics.Count)
+                        {
+                            numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angle));
+                        }
+                        if (angle == 0) continue;
+                        Rotate(i, angle);
+                        threads[i].Join();
+
                     }
-                    if (angle == 0) continue;
-                    Rotate(i, angle);
-                    paralelMutex.ReleaseMutex();
-                    threads[i].Join();
+                }
+                while (!brush.IsTouch(item))
+                {
+
+                    Rotate(ELEMENTS_COUNT, ROTATE_FREQUENCY);
+                    threads[ELEMENTS_COUNT].Join();
 
                 }
             }
-            while (!brush.IsTouch(item))
-            {
-                Rotate(ELEMENTS_COUNT, ROTATE_FREQUENCY);
-                threads[ELEMENTS_COUNT].Join();
-            }
         }
 
-        public void GoToItem(Item item,ref List<NumericUpDown> numerics)
+        public void GoToItem(Item item, ref List<NumericUpDown> numerics)
         {
             threads[ELEMENTS_COUNT] = new Thread(new ParameterizedThreadStart(ParalelFind));
             threads[ELEMENTS_COUNT].Start((item, numerics));

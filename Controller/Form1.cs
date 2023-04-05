@@ -283,8 +283,8 @@ namespace Controller
             Thread t = Thread.CurrentThread;
             t.Abort();
         }
-         
 
+        [Obsolete]
         private void resumeButton_Click(object sender, EventArgs e)
         {
             resumeButton.Visible = false;
@@ -292,6 +292,7 @@ namespace Controller
             controller.ResumeThread();
         }
 
+        [Obsolete]
         private void pauseButton_Click(object sender, EventArgs e)
         {
             resumeButton.Visible = true;
@@ -305,7 +306,7 @@ namespace Controller
             if (item == null)
                 this.item = new Item(d3d, point, itemRadius);
             else
-                item.ChangeCenter(point);
+                item.centerPoint = point;
             Invalidate();
         }
 

@@ -41,10 +41,7 @@ namespace Controller
             itemMaterial.Diffuse = Color.Red;
             itemMaterial.Specular = Color.White;
         }
-        public void ChangeCenter(Vector3 centerPoint)
-        {
-            this.centerPoint = centerPoint;
-        }
+
         private void SetPosition()
         {
             device.Transform.World = Matrix.Translation(centerPoint);
