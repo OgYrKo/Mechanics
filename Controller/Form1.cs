@@ -3,6 +3,7 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -34,6 +35,7 @@ namespace Controller
             numericUpDownList.Add(numElement3);
             numericUpDownList.Add(numElement4);
             numericUpDownList.Add(numElement5);
+            numericUpDownList.Add(numElement6);
 
             foreach (NumericUpDown numericUpDown in numericUpDownList)
             {
@@ -266,15 +268,17 @@ namespace Controller
         {
             goToPointButton.Visible = false;
             pauseButton.Visible = true;
+            ChangeEnabledNumElements();
             controller.GoToPoint(item.centerPoint, ref numericUpDownList);
             Thread t = new Thread(new ThreadStart(CheckStop));
             t.Start();
         }
+
         private void CheckStop()
         {
             while (controller.IsWork()) ;
-            goToPointButton.Visible = true;
-            pauseButton.Visible = false;
+            goToPointButton.BeginInvoke(new Action(() => goToPointButton.Visible = true));
+            pauseButton.BeginInvoke(new Action(() => pauseButton.Visible = true));
             ChangeEnabledNumElements();
             Thread t = Thread.CurrentThread;
             t.Abort();

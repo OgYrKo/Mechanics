@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using System.Threading;
 using System.Net;
+using System.Reflection;
 
 namespace Controller
 {
@@ -18,16 +19,17 @@ namespace Controller
         private Brush brush;
         Form form;
         Device device;
-        const int ELEMENTS_COUNT = 7;
-        const int ROTATE_FREQUENCY = 1;//на сколько градусов поворачивать за 1 раз
-        const int ROTATE_FREQUENCY_TIME = 50;//раз в сколько времени поворачивать (ms)
+        const int ELEMENTS_COUNT = 3;
+        const double ROTATE_FREQUENCY = 0.5;//на сколько градусов поворачивать за 1 раз
+        const int ROTATE_FREQUENCY_TIME = 25;//частота поворота (ms)
         Mutex drawMutex;
-        List<Thread> threads;
+        Thread[] threads;
+        Vector3 endPoint;
 
         public Controller(Form form, Device device)
         {
             elements = new Shoulder[ELEMENTS_COUNT];
-            threads = new List<Thread>();
+            threads = new Thread[ELEMENTS_COUNT+1];
             this.form = form;
             this.device = device;
             MutexInit();
@@ -56,10 +58,10 @@ namespace Controller
                 }
             }
 
-            brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + (ELEMENTS_COUNT % 3 == 0 ? offset / 2 : 0),
-                                                                        y + (ELEMENTS_COUNT % 3 == 1 ? offset / 2 : 0),
-                                                                        z + (ELEMENTS_COUNT % 3 == 2 ? offset / 2 : 0)));
-            //brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + offset/2, y, z));
+            endPoint = new Vector3(x + (ELEMENTS_COUNT % 3 == 0 ? offset / 2 : 0),
+                                   y + (ELEMENTS_COUNT % 3 == 1 ? offset / 2 : 0),
+                                   z + (ELEMENTS_COUNT % 3 == 2 ? offset / 2 : 0));
+            brush = new Brush(device, new Vector3(x, y, z), endPoint);
 
             for (int i = elements.Length - 1; i >= 0; i--)
             {
@@ -88,12 +90,14 @@ namespace Controller
 
         public bool IsWork()
         {
-            for(int i = 0; i < threads.Count; )
+            for(int i = 0; i < threads.Length; i++)
             {
-                if (!threads[i].IsAlive) threads.Remove(threads[i]);
-                else i++;
+                if (threads[i] != null && threads[i].IsAlive)
+                {
+                    return true;
+                }
             }
-            return threads.Count > 0;
+            return false;
         }
 
         public void DrawElements()
@@ -109,27 +113,27 @@ namespace Controller
 
         public void Rotate(int index,double angle)
         {
-            Thread thread = new Thread(new ParameterizedThreadStart(Rotate));
-            threads.Add(thread);
-            thread.Start((index, angle));
-            thread.Join();
+            threads[index] = new Thread(new ParameterizedThreadStart(Rotate));
+            threads[index].Start((index, angle));
         }
 
+        [Obsolete]
         public void StopThread()
         {
             if (threads == null) return;
             foreach (Thread t in threads)
             {
-                if(t.IsAlive) t.Suspend();
+                if(t!=null&&t.IsAlive) t.Suspend();
             }
         }
 
+        [Obsolete]
         public void ResumeThread()
         {
             if (threads == null) return;
             foreach (Thread t in threads)
             {
-                if (t.IsAlive) t.Resume();
+                if (t != null && t.IsAlive) t.Resume();
             }
         }
 
@@ -165,37 +169,47 @@ namespace Controller
             }
         }
 
-
-        public void GoToPoint(Vector3 point,ref List<NumericUpDown> numerics)
+        private void ParalelFind(object tuple)
         {
+            (Vector3, List<NumericUpDown>) typedTuple = ((Vector3, List<NumericUpDown>))tuple;
+            Vector3 point = typedTuple.Item1;
+            List<NumericUpDown> numerics=typedTuple.Item2;
             double[] angles = new double[ELEMENTS_COUNT];
-            //for (int i = 0; i < ELEMENTS_COUNT; i++)
-            //{
-            //    angles[i] = elements[i].GoToPoint(point);
-            //    if (i < numerics.Count)
-            //    {
-            //        numerics[i].Value = (int)angles[i];
-            //        numerics[i].Enabled = false;
-            //    }
-            //    if (angles[i] == 0) continue;
-            //    Rotate(i, angles[i]);
-            //}
-
-
             for (int i = 0; i < ELEMENTS_COUNT; i++)
             {
                 angles[i] = elements[i].GoToPoint(point);
-            }
-            for (int i = 0; i < ELEMENTS_COUNT && i < numerics.Count; i++)
-            {
-                numerics[i].Value = (int)angles[i];
-                numerics[i].Enabled = false;
-            }
-            for (int i = 0; i < ELEMENTS_COUNT; i++)
-            {
+                if (i < numerics.Count)
+                {
+                    numerics[i].BeginInvoke(new Action(()=>numerics[i].Value = (int)angles[i]));
+                }
                 if (angles[i] == 0) continue;
                 Rotate(i, angles[i]);
+                threads[i].Join();
+
             }
+        }
+
+        public void GoToPoint(Vector3 point,ref List<NumericUpDown> numerics)
+        {
+            threads[ELEMENTS_COUNT] = new Thread(new ParameterizedThreadStart(ParalelFind));
+            threads[ELEMENTS_COUNT].Start((point, numerics));
+
+            //узнаем углы поворота для каждого звена
+            //for (int i = 0; i < ELEMENTS_COUNT; i++)
+            //{
+            //    angles[i] = elements[i].GoToPoint(point);
+            //}
+            //for (int i = 0; i < ELEMENTS_COUNT && i < numerics.Count; i++)
+            //{
+            //    numerics[i].Value = (int)angles[i];
+            //    numerics[i].Enabled = false;
+            //}
+            ////поворавчиваем каждый узел на необходимый угол
+            //for (int i = 0; i < ELEMENTS_COUNT; i++)
+            //{
+            //    if (angles[i] == 0) continue;
+            //    Rotate(i, angles[i]);
+            //}
         }
     }
 }

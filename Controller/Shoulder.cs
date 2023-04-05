@@ -69,6 +69,7 @@ namespace Controller
             
         }
 
+
         public Degree GoToPoint(Vector3 point, Vector3 O)
         {
             Space s = new Space(O, startPoint, new List<Vector3>() { endPoint, point });
