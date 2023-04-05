@@ -7,15 +7,13 @@ namespace Controller
 {
     public static class Vector3Extencion
     {
-        public static Vector3 CrossProduct(this Vector3 u, Vector3 v)
+        public static bool Compare(Vector3 lhs, Vector3 rhs)
         {
-            Vector3 perp = new Vector3();
-
-            perp.X = u.Y * v.Z - u.Z * v.Y;
-            perp.Y = u.Z * v.X - u.X * v.Z;
-            perp.Z = u.X * v.Y - u.Y * v.X;
-
-            return perp;
+            double eps = 0.001;
+            if (Math.Abs(lhs.X - rhs.X) > eps) return false;
+            else if (Math.Abs(lhs.Y - rhs.Y) > eps) return false;
+            else if (Math.Abs(lhs.Z - rhs.Z) > eps) return false;
+            else return true;
         }
 
         public static Vector3 GetPerpendicular(this Vector3 v)

@@ -18,13 +18,15 @@ namespace Controller
         private Vector3[] cylindersEndPointsDirection;//направление пальцев
         private Material cylinderMaterial;
         private Vector3 startPoint;//точка соприкосновения с плечом
-        private Vector3 endPoint;//точка схвата
+        public Vector3 endPoint { get; private set; }//точка схвата
         private Vector3 elementVector;//координаты текущего вектора
         private const float RADIUS = 0.05f;
         private const int cylindersCount = 3;
         private Degree sumAlpha = 0;
         private Mutex rotateMutex;
+        private readonly object paralelLock;
         private Mutex drawMutex;
+        private Item item;
 
         public Brush(Device device, Vector3 startPoint, Vector3 endPoint)
         {
@@ -33,6 +35,7 @@ namespace Controller
             this.endPoint = endPoint;
             rotateMutex = new Mutex();
             drawMutex = new Mutex();
+            item = null;
             SetElementVector();
             SetCylinders();
             SetCylinderMaterial();
@@ -77,12 +80,36 @@ namespace Controller
             }
         }
 
-        
-
-        //TODO
-        public Degree GoToPoint(Vector3 point)
+        public bool IsTouch(Item itemIn)
         {
-            return 0;
+            // Координаты проверяемой точки
+            Vector3 checkPoint = cylindersEndPoints[0];
+            // Вычисляем расстояние от точки до центра шара
+            double d= (checkPoint - itemIn.centerPoint).Length();
+            if(d <= itemIn.radius)
+            {
+                AttachItem(itemIn);
+                return true;
+            }
+            else
+            {
+                if (item != null) 
+                    DettachItem();
+                return false;
+            }
+            
+        }
+
+        private bool AttachItem(Item itemIn)
+        {
+            if (this.item != null) return false;
+            this.item = itemIn;
+            return true;
+        }
+        private bool DettachItem()
+        {
+            this.item = null;
+            return true;
         }
 
         public Degree GoToPoint(Vector3 point, Vector3 O)
@@ -103,7 +130,7 @@ namespace Controller
                 for (int i = 0; i < cylindersEndPoints.Length; i++)
                 
                 {
-                    Vector3 B = startPoint+ (cylindersEndPointsDirection[i] - startPoint).CrossProduct(elementVector);
+                    Vector3 B = startPoint + Vector3.Cross(cylindersEndPointsDirection[i] - startPoint, elementVector);
                     
                     Space s = new Space(A, B, new List<Vector3>() { cylindersEndPoints[i] });
                 
@@ -116,6 +143,7 @@ namespace Controller
             {
                 sumAlpha -= alpha;
             }
+            if (item != null) IsTouch(item);
             rotateMutex.ReleaseMutex();
         }
 
@@ -145,6 +173,8 @@ namespace Controller
                 cylindersEndPointsDirection[i] = newPoints[i + cylindersEndPoints.Length + 2];
 
             SetElementVector();
+            if(item!=null)
+                item.centerPoint=new Vector3(endPoint.X, endPoint.Y, endPoint.Z);
             rotateMutex.ReleaseMutex();
         }
 

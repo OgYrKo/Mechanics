@@ -55,6 +55,9 @@
             this.setPointButton = new System.Windows.Forms.Button();
             this.pauseButton = new System.Windows.Forms.Button();
             this.resumeButton = new System.Windows.Forms.Button();
+            this.element6RotateBtn = new System.Windows.Forms.Button();
+            this.numElement6 = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numElement1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement3)).BeginInit();
@@ -62,6 +65,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numElement5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numElement6)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -154,7 +158,7 @@
             // grabButton
             // 
             this.grabButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.grabButton.Location = new System.Drawing.Point(1027, 401);
+            this.grabButton.Location = new System.Drawing.Point(1027, 418);
             this.grabButton.Name = "grabButton";
             this.grabButton.Size = new System.Drawing.Size(75, 23);
             this.grabButton.TabIndex = 17;
@@ -165,7 +169,7 @@
             // element5RotateBtn
             // 
             this.element5RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element5RotateBtn.Location = new System.Drawing.Point(1027, 339);
+            this.element5RotateBtn.Location = new System.Drawing.Point(1027, 319);
             this.element5RotateBtn.Name = "element5RotateBtn";
             this.element5RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element5RotateBtn.TabIndex = 16;
@@ -176,7 +180,7 @@
             // numBrush
             // 
             this.numBrush.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numBrush.Location = new System.Drawing.Point(873, 401);
+            this.numBrush.Location = new System.Drawing.Point(873, 418);
             this.numBrush.Name = "numBrush";
             this.numBrush.Size = new System.Drawing.Size(120, 22);
             this.numBrush.TabIndex = 15;
@@ -184,7 +188,7 @@
             // numElement5
             // 
             this.numElement5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement5.Location = new System.Drawing.Point(873, 342);
+            this.numElement5.Location = new System.Drawing.Point(873, 322);
             this.numElement5.Name = "numElement5";
             this.numElement5.Size = new System.Drawing.Size(120, 22);
             this.numElement5.TabIndex = 14;
@@ -193,7 +197,7 @@
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(792, 407);
+            this.label4.Location = new System.Drawing.Point(792, 424);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(53, 16);
             this.label4.TabIndex = 13;
@@ -202,7 +206,7 @@
             // element4RotateBtn
             // 
             this.element4RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element4RotateBtn.Location = new System.Drawing.Point(1027, 276);
+            this.element4RotateBtn.Location = new System.Drawing.Point(1027, 263);
             this.element4RotateBtn.Name = "element4RotateBtn";
             this.element4RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element4RotateBtn.TabIndex = 12;
@@ -213,7 +217,7 @@
             // numElement4
             // 
             this.numElement4.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement4.Location = new System.Drawing.Point(873, 276);
+            this.numElement4.Location = new System.Drawing.Point(873, 263);
             this.numElement4.Name = "numElement4";
             this.numElement4.Size = new System.Drawing.Size(120, 22);
             this.numElement4.TabIndex = 11;
@@ -222,7 +226,7 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(779, 342);
+            this.label5.Location = new System.Drawing.Point(779, 322);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(66, 16);
             this.label5.TabIndex = 10;
@@ -232,7 +236,7 @@
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(779, 278);
+            this.label6.Location = new System.Drawing.Point(779, 265);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 16);
             this.label6.TabIndex = 9;
@@ -335,11 +339,43 @@
             this.resumeButton.Visible = false;
             this.resumeButton.Click += new System.EventHandler(this.resumeButton_Click);
             // 
+            // element6RotateBtn
+            // 
+            this.element6RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.element6RotateBtn.Location = new System.Drawing.Point(1027, 370);
+            this.element6RotateBtn.Name = "element6RotateBtn";
+            this.element6RotateBtn.Size = new System.Drawing.Size(75, 23);
+            this.element6RotateBtn.TabIndex = 29;
+            this.element6RotateBtn.Text = "Rotate";
+            this.element6RotateBtn.UseVisualStyleBackColor = true;
+            this.element6RotateBtn.Click += new System.EventHandler(this.element6RotateBtn_Click);
+            // 
+            // numElement6
+            // 
+            this.numElement6.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.numElement6.Location = new System.Drawing.Point(873, 373);
+            this.numElement6.Name = "numElement6";
+            this.numElement6.Size = new System.Drawing.Size(120, 22);
+            this.numElement6.TabIndex = 28;
+            // 
+            // label8
+            // 
+            this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(779, 373);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(66, 16);
+            this.label8.TabIndex = 27;
+            this.label8.Text = "Element 6";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1148, 559);
+            this.Controls.Add(this.element6RotateBtn);
+            this.Controls.Add(this.numElement6);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.resumeButton);
             this.Controls.Add(this.pauseButton);
             this.Controls.Add(this.setPointButton);
@@ -381,6 +417,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numElement5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numElement6)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -415,6 +452,9 @@
         private System.Windows.Forms.Button setPointButton;
         private System.Windows.Forms.Button pauseButton;
         private System.Windows.Forms.Button resumeButton;
+        private System.Windows.Forms.Button element6RotateBtn;
+        private System.Windows.Forms.NumericUpDown numElement6;
+        private System.Windows.Forms.Label label8;
     }
 }
 

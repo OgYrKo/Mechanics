@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using System.Threading;
 using System.Net;
+using System.Reflection;
 
 namespace Controller
 {
@@ -18,33 +19,58 @@ namespace Controller
         private Brush brush;
         Form form;
         Device device;
-        const int ELEMENTS_COUNT = 6;
-        const int ROTATE_FREQUENCY = 1;//на сколько градусов поворачивать за 1 раз
-        const int ROTATE_FREQUENCY_TIME = 50;//раз в сколько времени поворачивать (ms)
+        const int ELEMENTS_COUNT = 7;
+        const double ROTATE_FREQUENCY = 0.5;//на сколько градусов поворачивать за 1 раз
+        const int ROTATE_FREQUENCY_TIME = 1;//частота поворота (ms)
         Mutex drawMutex;
-        List<Thread> threads;
+        Mutex paralelMutex;
+        object paralelLock;
+        Thread[] threads;
 
         public Controller(Form form, Device device)
         {
             elements = new Shoulder[ELEMENTS_COUNT];
-            threads = new List<Thread>();
+            threads = new Thread[ELEMENTS_COUNT + 1];
             this.form = form;
             this.device = device;
             MutexInit();
             SetStartPosition();
         }
 
+        private Vector3 GetEndPoint()
+        {
+            return brush.endPoint;//elements[ELEMENTS_COUNT - 1].endPoint;
+        }
+
         private void SetStartPosition()
         {
             float x, y, z;
             const float offset = 1f;
+            x = y = z = 0;
 
-            x = y = z = 2f;
-            brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + offset / 2, y, z));
+            for (int i = 0; i < ELEMENTS_COUNT; i++)
+            {
+                if (i % 3 == 0)
+                {
+                    y += offset;
+                }
+                else if (i % 3 == 1)
+                {
+                    z += offset;
+                }
+                else
+                {
+                    x += offset;
+                }
+            }
+
+            brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + (ELEMENTS_COUNT % 3 == 0 ? offset / 2 : 0),
+                                   y + (ELEMENTS_COUNT % 3 == 1 ? offset / 2 : 0),
+                                   z + (ELEMENTS_COUNT % 3 == 2 ? offset / 2 : 0)));
 
             for (int i = elements.Length - 1; i >= 0; i--)
             {
-                Vector3 endPoint = new Vector3(x, y, z);
+                Vector3 cylinderEndPoint = new Vector3(x, y, z);
                 if (i % 3 == 0)
                 {
                     y -= offset;
@@ -57,24 +83,28 @@ namespace Controller
                 {
                     x -= offset;
                 }
-                if (i == elements.Length - 1) elements[i] = new Shoulder(device, new Vector3(x, y, z), endPoint, brush);
-                else elements[i] = new Shoulder(device, new Vector3(x, y, z), endPoint, elements[i + 1]);
+                if (i == elements.Length - 1) elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, brush);
+                else elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, elements[i + 1]);
             }
         }
 
         private void MutexInit()
         {
             drawMutex = new Mutex();
+            paralelMutex = new Mutex();
+            paralelLock = new object();
         }
 
         public bool IsWork()
         {
-            for(int i = 0; i < threads.Count; )
+            for (int i = 0; i < threads.Length; i++)
             {
-                if (!threads[i].IsAlive) threads.Remove(threads[i]);
-                else i++;
+                if (threads[i] != null && threads[i].IsAlive)
+                {
+                    return true;
+                }
             }
-            return threads.Count > 0;
+            return false;
         }
 
         public void DrawElements()
@@ -88,28 +118,29 @@ namespace Controller
             drawMutex.ReleaseMutex();
         }
 
-        public void Rotate(int index,double angle)
+        public void Rotate(int index, double angle)
         {
-            Thread thread = new Thread(new ParameterizedThreadStart(Rotate));
-            threads.Add(thread);
-            thread.Start((index, angle));
+            threads[index] = new Thread(new ParameterizedThreadStart(Rotate));
+            threads[index].Start((index, angle));
         }
 
+        [Obsolete]
         public void StopThread()
         {
             if (threads == null) return;
             foreach (Thread t in threads)
             {
-                if(t.IsAlive) t.Suspend();
+                if (t != null && t.IsAlive) t.Suspend();
             }
         }
 
+        [Obsolete]
         public void ResumeThread()
         {
             if (threads == null) return;
             foreach (Thread t in threads)
             {
-                if (t.IsAlive) t.Resume();
+                if (t != null && t.IsAlive) t.Resume();
             }
         }
 
@@ -121,7 +152,7 @@ namespace Controller
             int angleSign = Convert.ToInt32(angle / Math.Abs(angle));
             //получаем элемент начиная с которого будем поворачивать все последующие
             Element element;
-            if (index == ELEMENTS_COUNT) element = brush;
+            if (index >= ELEMENTS_COUNT) element = brush;
             else element = elements[index];
 
             //выставляем количество поворотв в соответствии с частотой поворота
@@ -131,7 +162,7 @@ namespace Controller
             int completeRotationCount = 0;
             for (; completeRotationCount < rotationCount; completeRotationCount++)
             {
-                element.Rotate(angleSign*ROTATE_FREQUENCY);
+                element.Rotate(angleSign * ROTATE_FREQUENCY);
                 form.Invalidate();
                 Thread.Sleep(ROTATE_FREQUENCY_TIME);
             }
@@ -140,29 +171,50 @@ namespace Controller
             double rest = Math.Abs(angle) - rotationCount;
             if (rest > 0)
             {
-                element.Rotate(rest*angleSign);
+                element.Rotate(rest * angleSign);
                 form.Invalidate();
             }
         }
 
-
-        public void GoToPoint(Vector3 point,ref List<NumericUpDown> numerics)
+        private void ParalelFind(object tuple)
         {
-            double[] angles = new double[ELEMENTS_COUNT];
-            for (int i = 0; i < ELEMENTS_COUNT; i++)
+            (Item, List<NumericUpDown>) typedTuple = ((Item, List<NumericUpDown>))tuple;
+            lock (paralelLock)
             {
-                angles[i] = elements[i].GoToPoint(point);
+                Item item = typedTuple.Item1;
+                List<NumericUpDown> numerics = typedTuple.Item2;
+                while (!Vector3Extencion.Compare(GetEndPoint(), item.centerPoint))
+                {
+                    for (int i = 0; i < ELEMENTS_COUNT - 1; i++)
+                    {
+
+                        Vector3 copy = GetEndPoint();
+                        Vector3 endPoint = new Vector3(copy.X, copy.Y, copy.Z);
+                        double angle = elements[i].GoToPoint(item.centerPoint, endPoint);
+                        if (i < numerics.Count)
+                        {
+                            numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angle));
+                        }
+                        if (angle == 0) continue;
+                        Rotate(i, angle);
+                        threads[i].Join();
+
+                    }
+                }
+                while (!brush.IsTouch(item))
+                {
+
+                    Rotate(ELEMENTS_COUNT, ROTATE_FREQUENCY);
+                    threads[ELEMENTS_COUNT].Join();
+
+                }
             }
-            for(int i = 0; i < numerics.Count; i++)
-            {
-                numerics[i].Value = (int) angles[i];
-                numerics[i].Enabled = false;
-            }
-            for (int i = 0; i < ELEMENTS_COUNT; i++)
-            {
-                if (angles[i] == 0) continue;
-                Rotate(i, angles[i]);
-            }
+        }
+
+        public void GoToItem(Item item, ref List<NumericUpDown> numerics)
+        {
+            threads[ELEMENTS_COUNT] = new Thread(new ParameterizedThreadStart(ParalelFind));
+            threads[ELEMENTS_COUNT].Start((item, numerics));
         }
     }
 }

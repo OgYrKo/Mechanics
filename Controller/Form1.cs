@@ -3,6 +3,7 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -34,6 +35,7 @@ namespace Controller
             numericUpDownList.Add(numElement3);
             numericUpDownList.Add(numElement4);
             numericUpDownList.Add(numElement5);
+            numericUpDownList.Add(numElement6);
 
             foreach (NumericUpDown numericUpDown in numericUpDownList)
             {
@@ -48,7 +50,7 @@ namespace Controller
         {
             foreach(NumericUpDown numElement in numericUpDownList)
             {
-                numElement.Enabled = !numElement.Enabled;
+                numElement.BeginInvoke(new Action(() => numElement.Enabled = !numElement.Enabled));//TODO должно работать и так
             }
         }
 
@@ -247,9 +249,14 @@ namespace Controller
             RotateButton((int)numElement5.Value, 4);
         }
 
+        private void element6RotateBtn_Click(object sender, EventArgs e)
+        {
+            RotateButton((int)numElement5.Value, 5);
+        }
+
         private void grabButton_Click(object sender, EventArgs e)
         {
-            RotateButton((int)numBrush.Value, 6);
+            RotateButton((int)numBrush.Value, 7);
         }
 
         private void RotateButton(double angle, int index)
@@ -261,21 +268,23 @@ namespace Controller
         {
             goToPointButton.Visible = false;
             pauseButton.Visible = true;
-            controller.GoToPoint(item.centerPoint, ref numericUpDownList);
+            ChangeEnabledNumElements();
+            controller.GoToItem(item, ref numericUpDownList);
             Thread t = new Thread(new ThreadStart(CheckStop));
             t.Start();
         }
+
         private void CheckStop()
         {
             while (controller.IsWork()) ;
-            goToPointButton.Visible = true;
-            pauseButton.Visible = false;
+            goToPointButton.Invoke(new Action(() => goToPointButton.Visible = true));
+            pauseButton.Invoke(new Action(() => pauseButton.Visible = false));
             ChangeEnabledNumElements();
             Thread t = Thread.CurrentThread;
             t.Abort();
         }
-         
 
+        [Obsolete]
         private void resumeButton_Click(object sender, EventArgs e)
         {
             resumeButton.Visible = false;
@@ -283,6 +292,7 @@ namespace Controller
             controller.ResumeThread();
         }
 
+        [Obsolete]
         private void pauseButton_Click(object sender, EventArgs e)
         {
             resumeButton.Visible = true;
@@ -296,7 +306,7 @@ namespace Controller
             if (item == null)
                 this.item = new Item(d3d, point, itemRadius);
             else
-                item.ChangeCenter(point);
+                item.centerPoint = point;
             Invalidate();
         }
 
