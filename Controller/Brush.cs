@@ -18,7 +18,7 @@ namespace Controller
         private Vector3[] cylindersEndPointsDirection;//направление пальцев
         private Material cylinderMaterial;
         private Vector3 startPoint;//точка соприкосновения с плечом
-        private Vector3 endPoint;//точка схвата
+        public Vector3 endPoint { get; private set; }//точка схвата
         private Vector3 elementVector;//координаты текущего вектора
         private const float RADIUS = 0.05f;
         private const int cylindersCount = 3;
@@ -77,12 +77,13 @@ namespace Controller
             }
         }
 
-        
-
-        //TODO
-        public Degree GoToPoint(Vector3 point)
+        public bool IsTouch(Item item)
         {
-            return 0;
+            // Координаты проверяемой точки
+            Vector3 checkPoint = cylindersEndPoints[0];
+            // Вычисляем расстояние от точки до центра шара
+            double d= (checkPoint - item.centerPoint).Length();
+            return d <= item.radius;
         }
 
         public Degree GoToPoint(Vector3 point, Vector3 O)

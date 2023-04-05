@@ -50,7 +50,7 @@ namespace Controller
         {
             foreach(NumericUpDown numElement in numericUpDownList)
             {
-                numElement.Enabled = !numElement.Enabled;
+                numElement.BeginInvoke(new Action(() => numElement.Enabled = !numElement.Enabled));//TODO должно работать и так
             }
         }
 
@@ -269,7 +269,7 @@ namespace Controller
             goToPointButton.Visible = false;
             pauseButton.Visible = true;
             ChangeEnabledNumElements();
-            controller.GoToPoint(item.centerPoint, ref numericUpDownList);
+            controller.GoToItem(item, ref numericUpDownList);
             Thread t = new Thread(new ThreadStart(CheckStop));
             t.Start();
         }
@@ -277,8 +277,8 @@ namespace Controller
         private void CheckStop()
         {
             while (controller.IsWork()) ;
-            goToPointButton.BeginInvoke(new Action(() => goToPointButton.Visible = true));
-            pauseButton.BeginInvoke(new Action(() => pauseButton.Visible = true));
+            goToPointButton.Invoke(new Action(() => goToPointButton.Visible = true));
+            pauseButton.Invoke(new Action(() => pauseButton.Visible = false));
             ChangeEnabledNumElements();
             Thread t = Thread.CurrentThread;
             t.Abort();

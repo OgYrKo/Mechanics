@@ -15,7 +15,7 @@ namespace Controller
         private Mesh item;
         private Material itemMaterial;
         public Vector3 centerPoint { get; set; }
-        private float radius;
+        public float radius { get; private set; }
 
         public Item(Device device, Vector3 centerPoint,float radius)
         {

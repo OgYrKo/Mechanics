@@ -16,7 +16,7 @@ namespace Controller
         private Material cylinderMaterial;
         private Element nextElement;
         private Vector3 startPoint;
-        private Vector3 endPoint;
+        public Vector3 endPoint { get; private set;}
         private Vector3 elementVector;
         private const float RADIUS = 0.05f;
         private Mutex rotateMutex;
@@ -62,17 +62,9 @@ namespace Controller
             cylinderMaterial.Specular = Color.White;
         }
 
-        public Degree GoToPoint(Vector3 point)
+        public Degree GoToPoint(Vector3 point, Vector3 controllerEndPoint)
         {
-            Degree angle = nextElement.GoToPoint(point, startPoint);
-            return angle;
-            
-        }
-
-
-        public Degree GoToPoint(Vector3 point, Vector3 O)
-        {
-            Space s = new Space(O, startPoint, new List<Vector3>() { endPoint, point });
+            Space s = new Space(startPoint,endPoint, new List<Vector3>() { controllerEndPoint, point });
             return s.GetAngle();
         }
 

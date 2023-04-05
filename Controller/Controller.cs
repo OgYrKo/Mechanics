@@ -19,12 +19,12 @@ namespace Controller
         private Brush brush;
         Form form;
         Device device;
-        const int ELEMENTS_COUNT = 3;
+        const int ELEMENTS_COUNT = 7;
         const double ROTATE_FREQUENCY = 0.5;//на сколько градусов поворачивать за 1 раз
-        const int ROTATE_FREQUENCY_TIME = 25;//частота поворота (ms)
+        const int ROTATE_FREQUENCY_TIME = 1;//частота поворота (ms)
         Mutex drawMutex;
+        Mutex paralelMutex;
         Thread[] threads;
-        Vector3 endPoint;
 
         public Controller(Form form, Device device)
         {
@@ -34,6 +34,11 @@ namespace Controller
             this.device = device;
             MutexInit();
             SetStartPosition();
+        }
+
+        private Vector3 GetEndPoint()
+        {
+            return brush.endPoint;//elements[ELEMENTS_COUNT - 1].endPoint;
         }
 
         private void SetStartPosition()
@@ -58,14 +63,13 @@ namespace Controller
                 }
             }
 
-            endPoint = new Vector3(x + (ELEMENTS_COUNT % 3 == 0 ? offset / 2 : 0),
+            brush = new Brush(device, new Vector3(x, y, z), new Vector3(x + (ELEMENTS_COUNT % 3 == 0 ? offset / 2 : 0),
                                    y + (ELEMENTS_COUNT % 3 == 1 ? offset / 2 : 0),
-                                   z + (ELEMENTS_COUNT % 3 == 2 ? offset / 2 : 0));
-            brush = new Brush(device, new Vector3(x, y, z), endPoint);
+                                   z + (ELEMENTS_COUNT % 3 == 2 ? offset / 2 : 0)));
 
             for (int i = elements.Length - 1; i >= 0; i--)
             {
-                Vector3 endPoint = new Vector3(x, y, z);
+                Vector3 cylinderEndPoint = new Vector3(x, y, z);
                 if (i % 3 == 0)
                 {
                     y -= offset;
@@ -78,14 +82,15 @@ namespace Controller
                 {
                     x -= offset;
                 }
-                if (i == elements.Length - 1) elements[i] = new Shoulder(device, new Vector3(x, y, z), endPoint, brush);
-                else elements[i] = new Shoulder(device, new Vector3(x, y, z), endPoint, elements[i + 1]);
+                if (i == elements.Length - 1) elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, brush);
+                else elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, elements[i + 1]);
             }
         }
 
         private void MutexInit()
         {
             drawMutex = new Mutex();
+            paralelMutex = new Mutex();
         }
 
         public bool IsWork()
@@ -171,45 +176,39 @@ namespace Controller
 
         private void ParalelFind(object tuple)
         {
-            (Vector3, List<NumericUpDown>) typedTuple = ((Vector3, List<NumericUpDown>))tuple;
-            Vector3 point = typedTuple.Item1;
+            (Item, List<NumericUpDown>) typedTuple = ((Item, List<NumericUpDown>))tuple;
+            Item item = typedTuple.Item1;
             List<NumericUpDown> numerics=typedTuple.Item2;
-            double[] angles = new double[ELEMENTS_COUNT];
-            for (int i = 0; i < ELEMENTS_COUNT; i++)
+            while (!Vector3Extencion.Compare(GetEndPoint(), item.centerPoint))
             {
-                angles[i] = elements[i].GoToPoint(point);
-                if (i < numerics.Count)
+                for (int i = 0; i < ELEMENTS_COUNT - 1; i++)
                 {
-                    numerics[i].BeginInvoke(new Action(()=>numerics[i].Value = (int)angles[i]));
-                }
-                if (angles[i] == 0) continue;
-                Rotate(i, angles[i]);
-                threads[i].Join();
+                    paralelMutex.WaitOne();
+                    Vector3 copy = GetEndPoint();
+                    Vector3 endPoint = new Vector3(copy.X, copy.Y, copy.Z);
+                    double angle = elements[i].GoToPoint(item.centerPoint, endPoint);
+                    if (i < numerics.Count)
+                    {
+                        numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angle));
+                    }
+                    if (angle == 0) continue;
+                    Rotate(i, angle);
+                    paralelMutex.ReleaseMutex();
+                    threads[i].Join();
 
+                }
+            }
+            while (!brush.IsTouch(item))
+            {
+                Rotate(ELEMENTS_COUNT, ROTATE_FREQUENCY);
+                threads[ELEMENTS_COUNT].Join();
             }
         }
 
-        public void GoToPoint(Vector3 point,ref List<NumericUpDown> numerics)
+        public void GoToItem(Item item,ref List<NumericUpDown> numerics)
         {
             threads[ELEMENTS_COUNT] = new Thread(new ParameterizedThreadStart(ParalelFind));
-            threads[ELEMENTS_COUNT].Start((point, numerics));
-
-            //узнаем углы поворота для каждого звена
-            //for (int i = 0; i < ELEMENTS_COUNT; i++)
-            //{
-            //    angles[i] = elements[i].GoToPoint(point);
-            //}
-            //for (int i = 0; i < ELEMENTS_COUNT && i < numerics.Count; i++)
-            //{
-            //    numerics[i].Value = (int)angles[i];
-            //    numerics[i].Enabled = false;
-            //}
-            ////поворавчиваем каждый узел на необходимый угол
-            //for (int i = 0; i < ELEMENTS_COUNT; i++)
-            //{
-            //    if (angles[i] == 0) continue;
-            //    Rotate(i, angles[i]);
-            //}
+            threads[ELEMENTS_COUNT].Start((item, numerics));
         }
     }
 }

@@ -149,7 +149,8 @@ namespace Controller
             float bProjLength = Points[1].Length();
             float cos = scalar / aProjLength / bProjLength;
             Vector3 newVector = Vector3.Cross(Points[0], Points[1]);
-
+            if (cos > 1) cos = 1;
+            else if (cos < -1) cos = -1;
             double returnValue = Math.Acos(cos) * (180 / Math.PI);
             if (newVector.Z >= 0) return -returnValue;
             else return returnValue;
