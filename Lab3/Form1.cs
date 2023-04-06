@@ -15,13 +15,16 @@ namespace Lab3
     public partial class Form1 : Form
     {
         List<Label> resultLabels;
+        List<PictureBox> pictureBoxes;
 
         public Form1()
         {
             InitializeComponent();
-            comboBox1.SelectedIndex = 0;
             SetResultLabels();
+            SetPictureBoxes();
             SetLostFocusEvent();
+            comboBox1.SelectedIndex = 0;
+            btnCalc_Click(null, EventArgs.Empty);
         }
 
         private void SetResultLabels()
@@ -32,6 +35,16 @@ namespace Lab3
             resultLabels.Add(result3);
             resultLabels.Add(result4);
             resultLabels.Add(result5);
+        }
+
+        private void SetPictureBoxes()
+        {
+            pictureBoxes = new List<PictureBox>();
+            pictureBoxes.Add(pictureBox1);
+            pictureBoxes.Add(pictureBox2);
+            pictureBoxes.Add(pictureBox3);
+            pictureBoxes.Add(pictureBox4);
+            pictureBoxes.Add(pictureBox5);
         }
 
         private void SetLostFocusEvent()
@@ -47,19 +60,36 @@ namespace Lab3
             if (num < 0 || num > 1) ((TextBox)sender).Text = "0";
         }
 
+        private void SetPictureBoxPath(int taskIndex)
+        {
+            if (taskIndex >= 3) return;
+            for(int i = 0; i < pictureBoxes.Count; i++)
+            {
+                pictureBoxes[i].ImageLocation = $"{taskIndex}.{i + 1}.png";
+            }
+        }
+
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
-            if (comboBox1.SelectedIndex == 0 || comboBox1.SelectedIndex == 1)
+            if (comboBox1.SelectedIndex == 0)
             {
                 SetLabelVisibility(false);
+                SetPictureBoxPath(1);
 
+            }
+            else if(comboBox1.SelectedIndex == 1)
+            {
+                SetLabelVisibility(false);
+                SetPictureBoxPath(2);
             }
             else if (comboBox1.SelectedIndex == 2)
             {
                 SetLabelVisibility(true);
             }
-            
+            btnCalc_Click(null, EventArgs.Empty);
+
+
         }
 
         //true - для 3-го, false для 1 та 2
@@ -67,7 +97,7 @@ namespace Lab3
         {
             lblC.Visible = flag;
             txtC.Visible = flag;
-            lbl5.Visible = !flag;
+            pictureBox5.Visible = !flag;
             result5.Visible = !flag;
         }
 
@@ -102,7 +132,7 @@ namespace Lab3
             r[1] = IL.Or(A, IL.Not(B));
             r[2] = IL.And(A, IL.Not(B));
             r[3] = IL.Implication(A, IL.Not(B));
-            r[4] = IL.Equivalence(A, IL.Implication(A, IL.Not(B)));
+            r[4] = IL.Implication(A, IL.Implication(A, IL.Not(B)));
 
             return r;
         }
