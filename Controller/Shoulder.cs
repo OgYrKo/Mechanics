@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
+using System.Xml.Schema;
 
 namespace Controller
 {
@@ -21,6 +22,7 @@ namespace Controller
         private const float RADIUS = 0.05f;
         private Mutex rotateMutex;
         private Mutex drawMutex;
+        public float Length { get => elementVector.Length(); }
 
         public Shoulder(Device device, Vector3 startPoint, Vector3 endPoint)
         {

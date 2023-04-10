@@ -17,7 +17,7 @@ namespace Controller
     {
         private Shoulder[] elements;
         private Brush brush;
-        Form form;
+        Form1 form;
         Device device;
         const int ELEMENTS_COUNT = 7;
         const double ROTATE_FREQUENCY = 0.5;//на сколько градусов поворачивать за 1 раз
@@ -26,11 +26,12 @@ namespace Controller
         Mutex paralelMutex;
         object paralelLock;
         Thread[] threads;
+        int loopCount;
 
-        public Controller(Form form, Device device)
+        public Controller(Form1 form, Device device)
         {
             elements = new Shoulder[ELEMENTS_COUNT];
-            threads = new Thread[ELEMENTS_COUNT + 1];
+            threads = new Thread[ELEMENTS_COUNT + 2];
             this.form = form;
             this.device = device;
             MutexInit();
@@ -46,7 +47,8 @@ namespace Controller
         {
             float x, y, z;
             const float offset = 1f;
-            x = y = z = 0;
+            x = z = 0;
+            y = 2.5f;
 
             for (int i = 0; i < ELEMENTS_COUNT; i++)
             {
@@ -83,7 +85,8 @@ namespace Controller
                 {
                     x -= offset;
                 }
-                if (i == elements.Length - 1) elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, brush);
+                if(i==0) elements[i] = new Shoulder(device, new Vector3(), cylinderEndPoint, elements[i + 1]);
+                else if (i == elements.Length - 1) elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, brush);
                 else elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, elements[i + 1]);
             }
         }
@@ -120,6 +123,7 @@ namespace Controller
 
         public void Rotate(int index, double angle)
         {
+            if (threads[index] != null) threads[index].Abort();
             threads[index] = new Thread(new ParameterizedThreadStart(Rotate));
             threads[index].Start((index, angle));
         }
@@ -141,6 +145,15 @@ namespace Controller
             foreach (Thread t in threads)
             {
                 if (t != null && t.IsAlive) t.Resume();
+            }
+        }
+
+        public void AbortThread()
+        {
+            if (threads == null) return;
+            for(int i = 0; i < threads.Length; i++)
+            {
+                if (threads[i] != null && threads[i].IsAlive) threads[i].Abort();
             }
         }
 
@@ -181,6 +194,7 @@ namespace Controller
             (Item, List<NumericUpDown>) typedTuple = ((Item, List<NumericUpDown>))tuple;
             lock (paralelLock)
             {
+                loopCount = 0;
                 Item item = typedTuple.Item1;
                 List<NumericUpDown> numerics = typedTuple.Item2;
                 while (!Vector3Extencion.Compare(GetEndPoint(), item.centerPoint))
@@ -198,8 +212,32 @@ namespace Controller
                         if (angle == 0) continue;
                         Rotate(i, angle);
                         threads[i].Join();
-
                     }
+
+                    //////////////////////////////////////////////////////////////////////
+
+                    //double[] angles = new double[ELEMENTS_COUNT - 1];
+                    //Vector3 copy = GetEndPoint();
+                    //Vector3 endPoint = new Vector3(copy.X, copy.Y, copy.Z);
+                    //for (int i = 0; i < angles.Length; i++)
+                    //{
+                    //    angles[i] = elements[i].GoToPoint(item.centerPoint, endPoint);
+                    //    if (i < numerics.Count)
+                    //        numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angles[i]));
+                    //}
+
+                    //for (int i = 0; i < angles.Length; i++)
+                    //{
+                    //    if (angles[i] == 0) continue;
+                    //    Rotate(i, angles[i]);
+                    //    threads[i].Join();
+                    //}
+
+                    /////////////////////////////////////////////////////////////////
+
+
+
+                    form.SetLoopCountLbl(++loopCount);
                 }
                 while (!brush.IsTouch(item))
                 {
@@ -213,8 +251,13 @@ namespace Controller
 
         public void GoToItem(Item item, ref List<NumericUpDown> numerics)
         {
-            threads[ELEMENTS_COUNT] = new Thread(new ParameterizedThreadStart(ParalelFind));
-            threads[ELEMENTS_COUNT].Start((item, numerics));
+            if ((item.centerPoint-elements[0].endPoint).Length() -(brush.endPoint- elements[0].endPoint).Length() > 0)
+            {
+                MessageBox.Show("Точка вне зоны досегаемости!", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+            threads[ELEMENTS_COUNT+1] = new Thread(new ParameterizedThreadStart(ParalelFind));
+            threads[ELEMENTS_COUNT+1].Start((item, numerics));
         }
     }
 }

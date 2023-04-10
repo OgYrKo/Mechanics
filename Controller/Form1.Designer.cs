@@ -58,6 +58,8 @@
             this.element6RotateBtn = new System.Windows.Forms.Button();
             this.numElement6 = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.lblLoopCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numElement1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numElement3)).BeginInit();
@@ -72,7 +74,7 @@
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(779, 81);
+            this.label1.Location = new System.Drawing.Point(782, 114);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 16);
             this.label1.TabIndex = 0;
@@ -82,7 +84,7 @@
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(779, 145);
+            this.label2.Location = new System.Drawing.Point(782, 178);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 16);
             this.label2.TabIndex = 1;
@@ -91,7 +93,7 @@
             // numElement1
             // 
             this.numElement1.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement1.Location = new System.Drawing.Point(873, 79);
+            this.numElement1.Location = new System.Drawing.Point(876, 112);
             this.numElement1.Name = "numElement1";
             this.numElement1.Size = new System.Drawing.Size(120, 22);
             this.numElement1.TabIndex = 2;
@@ -99,7 +101,7 @@
             // element1RotateBtn
             // 
             this.element1RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element1RotateBtn.Location = new System.Drawing.Point(1027, 79);
+            this.element1RotateBtn.Location = new System.Drawing.Point(1030, 112);
             this.element1RotateBtn.Name = "element1RotateBtn";
             this.element1RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element1RotateBtn.TabIndex = 3;
@@ -111,7 +113,7 @@
             // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(779, 210);
+            this.label3.Location = new System.Drawing.Point(782, 243);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 16);
             this.label3.TabIndex = 4;
@@ -120,7 +122,7 @@
             // numElement2
             // 
             this.numElement2.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement2.Location = new System.Drawing.Point(873, 145);
+            this.numElement2.Location = new System.Drawing.Point(876, 178);
             this.numElement2.Name = "numElement2";
             this.numElement2.Size = new System.Drawing.Size(120, 22);
             this.numElement2.TabIndex = 5;
@@ -128,7 +130,7 @@
             // numElement3
             // 
             this.numElement3.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement3.Location = new System.Drawing.Point(873, 204);
+            this.numElement3.Location = new System.Drawing.Point(876, 237);
             this.numElement3.Name = "numElement3";
             this.numElement3.Size = new System.Drawing.Size(120, 22);
             this.numElement3.TabIndex = 6;
@@ -136,7 +138,7 @@
             // element2RotateBtn
             // 
             this.element2RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element2RotateBtn.Location = new System.Drawing.Point(1027, 142);
+            this.element2RotateBtn.Location = new System.Drawing.Point(1030, 175);
             this.element2RotateBtn.Name = "element2RotateBtn";
             this.element2RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element2RotateBtn.TabIndex = 7;
@@ -147,7 +149,7 @@
             // element3RotateBtn
             // 
             this.element3RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element3RotateBtn.Location = new System.Drawing.Point(1027, 204);
+            this.element3RotateBtn.Location = new System.Drawing.Point(1030, 237);
             this.element3RotateBtn.Name = "element3RotateBtn";
             this.element3RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element3RotateBtn.TabIndex = 8;
@@ -158,7 +160,7 @@
             // grabButton
             // 
             this.grabButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.grabButton.Location = new System.Drawing.Point(1027, 418);
+            this.grabButton.Location = new System.Drawing.Point(1030, 451);
             this.grabButton.Name = "grabButton";
             this.grabButton.Size = new System.Drawing.Size(75, 23);
             this.grabButton.TabIndex = 17;
@@ -169,7 +171,7 @@
             // element5RotateBtn
             // 
             this.element5RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element5RotateBtn.Location = new System.Drawing.Point(1027, 319);
+            this.element5RotateBtn.Location = new System.Drawing.Point(1030, 352);
             this.element5RotateBtn.Name = "element5RotateBtn";
             this.element5RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element5RotateBtn.TabIndex = 16;
@@ -180,7 +182,7 @@
             // numBrush
             // 
             this.numBrush.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numBrush.Location = new System.Drawing.Point(873, 418);
+            this.numBrush.Location = new System.Drawing.Point(876, 451);
             this.numBrush.Name = "numBrush";
             this.numBrush.Size = new System.Drawing.Size(120, 22);
             this.numBrush.TabIndex = 15;
@@ -188,7 +190,7 @@
             // numElement5
             // 
             this.numElement5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement5.Location = new System.Drawing.Point(873, 322);
+            this.numElement5.Location = new System.Drawing.Point(876, 355);
             this.numElement5.Name = "numElement5";
             this.numElement5.Size = new System.Drawing.Size(120, 22);
             this.numElement5.TabIndex = 14;
@@ -197,7 +199,7 @@
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(792, 424);
+            this.label4.Location = new System.Drawing.Point(795, 457);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(53, 16);
             this.label4.TabIndex = 13;
@@ -206,7 +208,7 @@
             // element4RotateBtn
             // 
             this.element4RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element4RotateBtn.Location = new System.Drawing.Point(1027, 263);
+            this.element4RotateBtn.Location = new System.Drawing.Point(1030, 296);
             this.element4RotateBtn.Name = "element4RotateBtn";
             this.element4RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element4RotateBtn.TabIndex = 12;
@@ -217,7 +219,7 @@
             // numElement4
             // 
             this.numElement4.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement4.Location = new System.Drawing.Point(873, 263);
+            this.numElement4.Location = new System.Drawing.Point(876, 296);
             this.numElement4.Name = "numElement4";
             this.numElement4.Size = new System.Drawing.Size(120, 22);
             this.numElement4.TabIndex = 11;
@@ -226,7 +228,7 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(779, 322);
+            this.label5.Location = new System.Drawing.Point(782, 355);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(66, 16);
             this.label5.TabIndex = 10;
@@ -236,7 +238,7 @@
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(779, 265);
+            this.label6.Location = new System.Drawing.Point(782, 298);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 16);
             this.label6.TabIndex = 9;
@@ -249,14 +251,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Location = new System.Drawing.Point(29, 36);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(724, 479);
+            this.pictureBox1.Size = new System.Drawing.Size(727, 545);
             this.pictureBox1.TabIndex = 18;
             this.pictureBox1.TabStop = false;
             // 
             // goToPointButton
             // 
             this.goToPointButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.goToPointButton.Location = new System.Drawing.Point(957, 512);
+            this.goToPointButton.Location = new System.Drawing.Point(960, 545);
             this.goToPointButton.Name = "goToPointButton";
             this.goToPointButton.Size = new System.Drawing.Size(75, 23);
             this.goToPointButton.TabIndex = 19;
@@ -268,7 +270,7 @@
             // 
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(808, 465);
+            this.label7.Location = new System.Drawing.Point(811, 498);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(37, 16);
             this.label7.TabIndex = 20;
@@ -277,7 +279,7 @@
             // xPointTxt
             // 
             this.xPointTxt.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.xPointTxt.Location = new System.Drawing.Point(873, 465);
+            this.xPointTxt.Location = new System.Drawing.Point(876, 498);
             this.xPointTxt.Name = "xPointTxt";
             this.xPointTxt.Size = new System.Drawing.Size(50, 22);
             this.xPointTxt.TabIndex = 21;
@@ -287,7 +289,7 @@
             // yPointTxt
             // 
             this.yPointTxt.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.yPointTxt.Location = new System.Drawing.Point(943, 465);
+            this.yPointTxt.Location = new System.Drawing.Point(946, 498);
             this.yPointTxt.Name = "yPointTxt";
             this.yPointTxt.Size = new System.Drawing.Size(50, 22);
             this.yPointTxt.TabIndex = 22;
@@ -297,7 +299,7 @@
             // zPointTxt
             // 
             this.zPointTxt.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.zPointTxt.Location = new System.Drawing.Point(1013, 465);
+            this.zPointTxt.Location = new System.Drawing.Point(1016, 498);
             this.zPointTxt.Name = "zPointTxt";
             this.zPointTxt.Size = new System.Drawing.Size(50, 22);
             this.zPointTxt.TabIndex = 23;
@@ -307,7 +309,7 @@
             // setPointButton
             // 
             this.setPointButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.setPointButton.Location = new System.Drawing.Point(848, 512);
+            this.setPointButton.Location = new System.Drawing.Point(851, 545);
             this.setPointButton.Name = "setPointButton";
             this.setPointButton.Size = new System.Drawing.Size(75, 23);
             this.setPointButton.TabIndex = 24;
@@ -318,7 +320,7 @@
             // pauseButton
             // 
             this.pauseButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.pauseButton.Location = new System.Drawing.Point(957, 511);
+            this.pauseButton.Location = new System.Drawing.Point(960, 544);
             this.pauseButton.Name = "pauseButton";
             this.pauseButton.Size = new System.Drawing.Size(75, 23);
             this.pauseButton.TabIndex = 25;
@@ -330,7 +332,7 @@
             // resumeButton
             // 
             this.resumeButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.resumeButton.Location = new System.Drawing.Point(957, 511);
+            this.resumeButton.Location = new System.Drawing.Point(960, 544);
             this.resumeButton.Name = "resumeButton";
             this.resumeButton.Size = new System.Drawing.Size(75, 23);
             this.resumeButton.TabIndex = 26;
@@ -342,7 +344,7 @@
             // element6RotateBtn
             // 
             this.element6RotateBtn.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.element6RotateBtn.Location = new System.Drawing.Point(1027, 370);
+            this.element6RotateBtn.Location = new System.Drawing.Point(1030, 403);
             this.element6RotateBtn.Name = "element6RotateBtn";
             this.element6RotateBtn.Size = new System.Drawing.Size(75, 23);
             this.element6RotateBtn.TabIndex = 29;
@@ -353,7 +355,7 @@
             // numElement6
             // 
             this.numElement6.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.numElement6.Location = new System.Drawing.Point(873, 373);
+            this.numElement6.Location = new System.Drawing.Point(876, 406);
             this.numElement6.Name = "numElement6";
             this.numElement6.Size = new System.Drawing.Size(120, 22);
             this.numElement6.TabIndex = 28;
@@ -362,17 +364,39 @@
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(779, 373);
+            this.label8.Location = new System.Drawing.Point(782, 406);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(66, 16);
             this.label8.TabIndex = 27;
             this.label8.Text = "Element 6";
             // 
+            // label9
+            // 
+            this.label9.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(837, 56);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(78, 16);
+            this.label9.TabIndex = 30;
+            this.label9.Text = "Loop Count:";
+            // 
+            // lblLoopCount
+            // 
+            this.lblLoopCount.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.lblLoopCount.AutoSize = true;
+            this.lblLoopCount.Location = new System.Drawing.Point(960, 55);
+            this.lblLoopCount.Name = "lblLoopCount";
+            this.lblLoopCount.Size = new System.Drawing.Size(14, 16);
+            this.lblLoopCount.TabIndex = 31;
+            this.lblLoopCount.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1148, 559);
+            this.ClientSize = new System.Drawing.Size(1151, 625);
+            this.Controls.Add(this.lblLoopCount);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.element6RotateBtn);
             this.Controls.Add(this.numElement6);
             this.Controls.Add(this.label8);
@@ -407,6 +431,7 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
@@ -455,6 +480,8 @@
         private System.Windows.Forms.Button element6RotateBtn;
         private System.Windows.Forms.NumericUpDown numElement6;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblLoopCount;
     }
 }
 

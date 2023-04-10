@@ -18,6 +18,7 @@ namespace Controller
         CustomVertex.PositionColored[] gridVertices;
         const float itemRadius = 0.1f;
         const int numericLimit = 180;
+        List<Thread> threads;
 
         public Form1()
         {
@@ -25,6 +26,12 @@ namespace Controller
             SetNumElementsList();
             d3d = null;
             item = null;
+            this.threads = new List<Thread>();
+        }
+
+        public void SetLoopCountLbl(int count)
+        {
+            lblLoopCount.Invoke(new Action(() => lblLoopCount.Text = count.ToString()));
         }
 
         private void SetNumElementsList()
@@ -191,7 +198,11 @@ namespace Controller
                 (float)Math.PI / 4,//высота видимости
                 this.Width / this.Height, //ширина видимости
                 1.0f, 100.0f);//передний и задний план
-            d3d.Transform.View = Matrix.LookAtLH(new Vector3(0, 0, -5f), new Vector3(), new Vector3(0, 1, 0));
+
+            float xOffset = 1f;
+            float yOffset = 2f;
+            float zOffset = 0;
+            d3d.Transform.View = Matrix.LookAtLH(new Vector3(xOffset, yOffset, -5f+zOffset), new Vector3(xOffset,yOffset,zOffset), new Vector3(0, 1, 0));
         }
 
         private void SetAxis()
@@ -271,6 +282,7 @@ namespace Controller
             ChangeEnabledNumElements();
             controller.GoToItem(item, ref numericUpDownList);
             Thread t = new Thread(new ThreadStart(CheckStop));
+            threads.Add(t);
             t.Start();
         }
 
@@ -344,6 +356,14 @@ namespace Controller
             }
         }
 
-        
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            controller.AbortThread();
+            for(int i=0;i< threads.Count; i++)
+            {
+                if(threads!=null)
+                    threads[i].Abort();
+            }
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace Controller
         private readonly object paralelLock;
         private Mutex drawMutex;
         private Item item;
+        public float Length { get => elementVector.Length(); }
 
         public Brush(Device device, Vector3 startPoint, Vector3 endPoint)
         {
