@@ -16,13 +16,12 @@ namespace Controller
         private Mesh cylinder;
         private Material cylinderMaterial;
         private Element nextElement;
-        private Vector3 startPoint;
+        public Vector3 startPoint { get; private set; }
         public Vector3 endPoint { get; private set;}
         private Vector3 elementVector;
         private const float RADIUS = 0.05f;
         private Mutex rotateMutex;
         private Mutex drawMutex;
-        public float Length { get => elementVector.Length(); }
 
         public Shoulder(Device device, Vector3 startPoint, Vector3 endPoint)
         {
@@ -64,10 +63,13 @@ namespace Controller
             cylinderMaterial.Specular = Color.White;
         }
 
-        public Degree GoToPoint(Vector3 point, Vector3 controllerEndPoint)
+        public Degree GoToPoint(ref Vector3 point, Vector3 controllerEndPoint)
         {
-            Space s = new Space(startPoint,endPoint, new List<Vector3>() { controllerEndPoint, point });
-            return s.GetAngle();
+            Space s = new Space(startPoint,endPoint);
+            double angle= s.GetAngle(point,controllerEndPoint);
+            if(!double.IsNaN(angle))
+                point=s.RotatePoints(new List<Vector3>() { point, controllerEndPoint } ,- angle)[0];
+            return angle;
         }
 
         /// <summary>
@@ -109,8 +111,8 @@ namespace Controller
             List<Vector3> points = new List<Vector3>();
             points.Add(startPoint);
             points.Add(endPoint);
-            Space space = new Space(A, B, points);
-            List<Vector3> newPoints = space.Rotate(alpha);
+            Space space = new Space(A, B);
+            List<Vector3> newPoints = space.RotatePoints(points,alpha);
             startPoint = newPoints[0];
             endPoint = newPoints[1];
 

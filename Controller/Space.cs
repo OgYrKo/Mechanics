@@ -7,38 +7,52 @@ namespace Controller
     using Degree = Double;
     internal class Space
     {
-        Vector3 old_A;
-        Vector3 B;
-        List<Vector3> Points;
+        Vector3 translation;
+        Vector3 vector;
 
         double cos_f, sin_f, cos_theta, sin_theta;
 
 
-        public Space(Vector3 A, Vector3 B, List<Vector3> points)
+        public Space(Vector3 O, Vector3 O1)
         {
-            this.Points = new List<Vector3>();
-            old_A = A;
-            this.B = B - A;
-            for (int i = 0; i < points.Count; i++)
-            {
-                this.Points.Add(points[i] - A);
-            }
+            translation = O;
+            this.vector = O1 - translation;
             SetPhi();
             SetTheta();
         }
 
-        public List<Vector3> Rotate(Degree angle)
+        public List<Vector3> PointsToUpperSystem(List<Vector3> points)
+        {
+            for(int i=0;i<points.Count;i++)
+            {
+                points[i] = ToUpperSystem(points[i]-translation);
+            }
+            return points;
+        }
+
+        //public List<Vector3> PointsToLowerSystem(List<Vector3> points)
+        //{
+        //    for (int i = 0; i < points.Count; i++)
+        //    {
+        //        points[i] = ToLowerSystem(points[i]);
+        //    }
+        //    return points;
+        //}
+
+        public Vector3 ToUpperSystem(Vector3 vector) => VectorToOZ(VectorToXZ(vector));
+        public Vector3 ToLowerSystem(Vector3 vector) => VectorFromXZ(VectorFromOZ(vector));
+
+
+        public List<Vector3> RotatePoints(List<Vector3> points, Degree angle)
         {
             List<Vector3> result = new List<Vector3>();
 
-            for (int i = 0; i < Points.Count; i++)
+            for (int i = 0; i < points.Count; i++)
             {
-                Vector3 p = VectorToXZ(Points[i]);
-                p = VectorToOZ(p);
+                Vector3 p = ToUpperSystem(points[i]-translation);
                 p = RotateByZ(p, angle);
-                p = VectorFromOZ(p);
-                p = VectorFromXZ(p);
-                result.Add(p + old_A);
+                p = ToLowerSystem(p);
+                result.Add(p + translation);
             }
             return result;
         }
@@ -46,8 +60,8 @@ namespace Controller
         //угол между осью вращения и осью oz
         private void SetPhi()
         {
-            double scalar = B.Length();
-            cos_f = B.Z / scalar;
+            double scalar = vector.Length();
+            cos_f = vector.Z / scalar;
             sin_f = Math.Sqrt(1 - cos_f * cos_f);//B.X / scalar;//
         }
 
@@ -55,6 +69,7 @@ namespace Controller
         {
             return new Vector3((float)(cos_theta * point.X + sin_theta * point.Y), (float)(-sin_theta * point.X + cos_theta * point.Y), point.Z);
         }
+
         private Vector3 VectorFromXZ(Vector3 point)
         {
             return new Vector3((float)(cos_theta * point.X - sin_theta * point.Y), (float)(sin_theta * point.X + cos_theta * point.Y), point.Z);
@@ -105,17 +120,17 @@ namespace Controller
             double theta = 0;
             sin_theta = -2;
             cos_theta = -2;
-            if (B.X > 0)
+            if (vector.X > 0)
             {
-                theta = Math.Atan(B.Y / B.X);
+                theta = Math.Atan(vector.Y / vector.X);
             }
-            else if (B.X < 0)
+            else if (vector.X < 0)
             {
-                theta = Math.PI + Math.Atan(B.Y / B.X);
+                theta = Math.PI + Math.Atan(vector.Y / vector.X);
             }
             else
             {
-                if (B.Y >= 0)
+                if (vector.Y >= 0)
                 {
                     sin_theta = 1;
                     cos_theta = 0;
@@ -132,83 +147,40 @@ namespace Controller
 
         private Degree ConvertRadianToDegree(double radian) => radian * 180 / Math.PI;
 
-        public Degree GetAngle()
+        public Degree GetAngle(Vector3 A, Vector3 O7)
         {
+            Vector3 OA=A-translation;
+            Vector3 OO1 = vector;
+            Vector3 OO7 = O7-translation;
 
-            //находим проэкции
-            for (int i = 0; i < Points.Count; i++)
-            {
-                Vector3 p = VectorToXZ(Points[i]);
-                p = VectorToOZ(p);
-                p.Z = 0;
-                Points[i] = p;
-            }
+            Vector3 O1A_1 = ToUpperSystem(OA - OO1);
+            Vector3 O1O7_1 = ToUpperSystem(OO7 - OO1);
 
-            float scalar = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
-            float aProjLength = Points[0].Length();
-            float bProjLength = Points[1].Length();
+            O1A_1.Z = 0;
+            O1O7_1.Z = 0;
+            
+
+            float scalar = O1A_1.X * O1O7_1.X + O1A_1.Y * O1O7_1.Y + O1A_1.Z * O1O7_1.Z;
+            float aProjLength = O1A_1.Length();
+            float bProjLength = O1O7_1.Length();
             float cos = scalar / aProjLength / bProjLength;
-            Vector3 newVector = Vector3.Cross(Points[0], Points[1]);
+            Vector3 newVector = Vector3.Cross(O1A_1, O1O7_1);
             if (cos > 1) cos = 1;
             else if (cos < -1) cos = -1;
             double returnValue = Math.Acos(cos) * (180 / Math.PI);
-            if (newVector.Z >= 0) return -returnValue;
-            else return returnValue;
+            if (newVector.Z >= 0) return returnValue;
+            else return -returnValue;
 
-
-
-            //Vector3 newVector = Vector3.Cross(Points[1], Points[0]);
-            //double numerator = newVector.Length();
-            //double denominator = Points[0].Length() * Points[1].Length();
-            //double sin = numerator / denominator;
-            //if (sin > 1) sin = 1;
-            //if (newVector.Z >= 0) sin *= -1;
-            //numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
-            //double cos = numerator / denominator;
-
-            //double returnValue = ConvertRadianToDegree(Math.Asin(sin));
-
-            //if (sin == 0)
-            //{
-            //    numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
-            //    double cos = numerator / denominator;
-            //    if (cos == 1) return 0;
-            //    else return 180;
-            //}
-            //return returnValue;
         }
-        //private double GetAngleBySinAndCos(double sin,double cos)
-        //{
-        //    double angle;
-        //    double angleBySin = Math.Asin(sin);
-        //    double angleByCos = Math.Acos(cos);
-        //    if (sin > 0)
-        //    {
-        //        if(cos> 0)
-        //        {
-        //            angle = angleByCos;
-        //        }
-        //        else
-        //        {
-        //            angle = angleByCos;
-        //        }
-        //    }
-        //    else if (sin < 0)
-        //    {
-        //        if (cos > 0)
-        //        {
 
-        //        }
-        //        else
-        //        {
+        public Vector3 GetNewA(Vector3 A, Degree angle)
+        {
+            Vector3 OA = A - translation;
+            Vector3 OO1 = vector;
 
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (cos == 1) return 0;
-        //        else return 180;
-        //    }
-        //}
+            Vector3 O1A_1 = ToUpperSystem(OA - OO1);
+            Vector3 O1A_1_new = RotateByZ(O1A_1, -angle);
+            return O1A_1_new;
+        }
     }
 }

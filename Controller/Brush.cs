@@ -24,10 +24,8 @@ namespace Controller
         private const int cylindersCount = 3;
         private Degree sumAlpha = 0;
         private Mutex rotateMutex;
-        private readonly object paralelLock;
         private Mutex drawMutex;
         private Item item;
-        public float Length { get => elementVector.Length(); }
 
         public Brush(Device device, Vector3 startPoint, Vector3 endPoint)
         {
@@ -73,10 +71,10 @@ namespace Controller
 
             Vector3 newVector = elementVector.GetPerpendicular(); // произвольный вектор, перпендикулярный u
 
-            Space s = new Space(new Vector3(), elementVector, new List<Vector3>() { newVector });
+            Space s = new Space(new Vector3(), elementVector);
             for (int i = 0; i < cylindersCount; i++)
             {
-                cylindersEndPoints[i] = startPoint + s.Rotate(i * 360 / cylindersCount)[0];
+                cylindersEndPoints[i] = startPoint + s.RotatePoints(new List<Vector3>() { newVector },i * 360 / cylindersCount)[0];
                 cylindersEndPointsDirection[i]= new Vector3(cylindersEndPoints[i].X, cylindersEndPoints[i].Y, cylindersEndPoints[i].Z);
             }
         }
@@ -100,6 +98,8 @@ namespace Controller
             }
             
         }
+
+        public bool CanGrab() => sumAlpha < 90;
 
         private bool AttachItem(Item itemIn)
         {
@@ -133,9 +133,9 @@ namespace Controller
                 {
                     Vector3 B = startPoint + Vector3.Cross(cylindersEndPointsDirection[i] - startPoint, elementVector);
                     
-                    Space s = new Space(A, B, new List<Vector3>() { cylindersEndPoints[i] });
+                    Space s = new Space(A, B);
                 
-                    cylindersEndPoints[i] = s.Rotate(-alpha)[0];
+                    cylindersEndPoints[i] = s.RotatePoints(new List<Vector3>() { cylindersEndPoints[i] } ,- alpha)[0];
                     
                 }
                 
@@ -162,8 +162,8 @@ namespace Controller
             for (int i = 0; i < cylindersEndPointsDirection.Length; i++)
                 points.Add(cylindersEndPointsDirection[i]);
 
-            Space space = new Space(A, B, points);
-            List<Vector3> newPoints = space.Rotate(alpha);
+            Space space = new Space(A, B);
+            List<Vector3> newPoints = space.RotatePoints(points,alpha);
             startPoint = newPoints[0];
             endPoint = newPoints[1];
 
