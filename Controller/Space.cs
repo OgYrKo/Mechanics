@@ -144,71 +144,15 @@ namespace Controller
                 Points[i] = p;
             }
 
-            float scalar = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
+            float scalar = Vector3.Dot(Points[0], Points[1]);
             float aProjLength = Points[0].Length();
             float bProjLength = Points[1].Length();
             float cos = scalar / aProjLength / bProjLength;
-            Vector3 newVector = Vector3.Cross(Points[0], Points[1]);
+            Vector3 newVector = Vector3.Cross(Points[1],Points[0]);
             if (cos > 1) cos = 1;
             else if (cos < -1) cos = -1;
             double returnValue = Math.Acos(cos) * (180 / Math.PI);
-            if (newVector.Z >= 0) return -returnValue;
-            else return returnValue;
-
-
-
-            //Vector3 newVector = Vector3.Cross(Points[1], Points[0]);
-            //double numerator = newVector.Length();
-            //double denominator = Points[0].Length() * Points[1].Length();
-            //double sin = numerator / denominator;
-            //if (sin > 1) sin = 1;
-            //if (newVector.Z >= 0) sin *= -1;
-            //numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
-            //double cos = numerator / denominator;
-
-            //double returnValue = ConvertRadianToDegree(Math.Asin(sin));
-
-            //if (sin == 0)
-            //{
-            //    numerator = Points[0].X * Points[1].X + Points[0].Y * Points[1].Y + Points[0].Z * Points[1].Z;
-            //    double cos = numerator / denominator;
-            //    if (cos == 1) return 0;
-            //    else return 180;
-            //}
-            //return returnValue;
+            return Math.Sign(newVector.Z) * returnValue;
         }
-        //private double GetAngleBySinAndCos(double sin,double cos)
-        //{
-        //    double angle;
-        //    double angleBySin = Math.Asin(sin);
-        //    double angleByCos = Math.Acos(cos);
-        //    if (sin > 0)
-        //    {
-        //        if(cos> 0)
-        //        {
-        //            angle = angleByCos;
-        //        }
-        //        else
-        //        {
-        //            angle = angleByCos;
-        //        }
-        //    }
-        //    else if (sin < 0)
-        //    {
-        //        if (cos > 0)
-        //        {
-
-        //        }
-        //        else
-        //        {
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (cos == 1) return 0;
-        //        else return 180;
-        //    }
-        //}
     }
 }
