@@ -9,11 +9,13 @@ namespace Controller
     {
         public static bool Compare(Vector3 lhs, Vector3 rhs)
         {
-            double eps = 0.001;
-            if (Math.Abs(lhs.X - rhs.X) > eps) return false;
-            else if (Math.Abs(lhs.Y - rhs.Y) > eps) return false;
-            else if (Math.Abs(lhs.Z - rhs.Z) > eps) return false;
-            else return true;
+            return lhs.Equals(rhs);
+
+            //double eps = 0.0000001;
+            //if (Math.Abs(lhs.X - rhs.X) > eps) return false;
+            //else if (Math.Abs(lhs.Y - rhs.Y) > eps) return false;
+            //else if (Math.Abs(lhs.Z - rhs.Z) > eps) return false;
+            //else return true;
         }
 
         public static Vector3 GetPerpendicular(this Vector3 v)

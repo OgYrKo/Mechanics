@@ -66,8 +66,8 @@ namespace Controller
 
         public Degree GoToPoint(Vector3 point, Vector3 controllerEndPoint)
         {
-            Space s = new Space(startPoint,endPoint, new List<Vector3>() { controllerEndPoint, point });
-            return s.GetAngle();
+            Space s = new Space(startPoint,endPoint);
+            return s.GetAngle(point,controllerEndPoint);
         }
 
         /// <summary>
@@ -109,8 +109,8 @@ namespace Controller
             List<Vector3> points = new List<Vector3>();
             points.Add(startPoint);
             points.Add(endPoint);
-            Space space = new Space(A, B, points);
-            List<Vector3> newPoints = space.Rotate(alpha);
+            Space space = new Space(A, B);
+            List<Vector3> newPoints = space.RotatePoints(points,alpha);
             startPoint = newPoints[0];
             endPoint = newPoints[1];
 

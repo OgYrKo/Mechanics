@@ -7,47 +7,41 @@ namespace Controller
     using Degree = Double;
     internal class Space
     {
-        Vector3 old_A;
-        Vector3 B;
-        List<Vector3> Points;
+        Vector3 translation;
+        Vector3 vector;
 
         double cos_f, sin_f, cos_theta, sin_theta;
 
 
-        public Space(Vector3 A, Vector3 B, List<Vector3> points)
+        public Space(Vector3 O, Vector3 O1)
         {
-            this.Points = new List<Vector3>();
-            old_A = A;
-            this.B = B - A;
-            for (int i = 0; i < points.Count; i++)
-            {
-                this.Points.Add(points[i] - A);
-            }
+            translation = O;
+            this.vector = O1 - translation;
             SetPhi();
             SetTheta();
         }
 
-        public List<Vector3> Rotate(Degree angle)
+        public List<Vector3> RotatePoints(List<Vector3> points, Degree angle)
         {
             List<Vector3> result = new List<Vector3>();
 
-            for (int i = 0; i < Points.Count; i++)
+            for (int i = 0; i < points.Count; i++)
             {
-                Vector3 p = VectorToXZ(Points[i]);
-                p = VectorToOZ(p);
+                Vector3 p = ToUpperSystem(points[i] - translation);
                 p = RotateByZ(p, angle);
-                p = VectorFromOZ(p);
-                p = VectorFromXZ(p);
-                result.Add(p + old_A);
+                p = ToLowerSystem(p);
+                result.Add(p + translation);
             }
             return result;
         }
+        public Vector3 ToUpperSystem(Vector3 vector) => VectorToOZ(VectorToXZ(vector));
+        public Vector3 ToLowerSystem(Vector3 vector) => VectorFromXZ(VectorFromOZ(vector));
 
         //угол между осью вращения и осью oz
         private void SetPhi()
         {
-            double scalar = B.Length();
-            cos_f = B.Z / scalar;
+            double scalar = vector.Length();
+            cos_f = vector.Z / scalar;
             sin_f = Math.Sqrt(1 - cos_f * cos_f);//B.X / scalar;//
         }
 
@@ -105,17 +99,17 @@ namespace Controller
             double theta = 0;
             sin_theta = -2;
             cos_theta = -2;
-            if (B.X > 0)
+            if (vector.X > 0)
             {
-                theta = Math.Atan(B.Y / B.X);
+                theta = Math.Atan(vector.Y / vector.X);
             }
-            else if (B.X < 0)
+            else if (vector.X < 0)
             {
-                theta = Math.PI + Math.Atan(B.Y / B.X);
+                theta = Math.PI + Math.Atan(vector.Y / vector.X);
             }
             else
             {
-                if (B.Y >= 0)
+                if (vector.Y >= 0)
                 {
                     sin_theta = 1;
                     cos_theta = 0;
@@ -132,27 +126,32 @@ namespace Controller
 
         private Degree ConvertRadianToDegree(double radian) => radian * 180 / Math.PI;
 
-        public Degree GetAngle()
+        public Degree GetAngle(Vector3 A, Vector3 O7)
         {
+            Vector3 Axy = ToUpperSystem(A-translation);
+            Axy.Z = 0;
+            Vector3 O7xy = ToUpperSystem(O7 - translation);
+            O7xy.Z = 0;
 
-            //находим проэкции
-            for (int i = 0; i < Points.Count; i++)
-            {
-                Vector3 p = VectorToXZ(Points[i]);
-                p = VectorToOZ(p);
-                p.Z = 0;
-                Points[i] = p;
-            }
 
-            float scalar = Vector3.Dot(Points[0], Points[1]);
-            float aProjLength = Points[0].Length();
-            float bProjLength = Points[1].Length();
-            float cos = scalar / aProjLength / bProjLength;
-            Vector3 newVector = Vector3.Cross(Points[1],Points[0]);
-            if (cos > 1) cos = 1;
-            else if (cos < -1) cos = -1;
-            double returnValue = Math.Acos(cos) * (180 / Math.PI);
-            return Math.Sign(newVector.Z) * returnValue;
+            //double scalar = Vector3.Dot(O7xy, Axy);
+            //double aProjLength = O7xy.Length();
+            //double bProjLength = Axy.Length();
+            //double cos = scalar / aProjLength / bProjLength;
+            //Vector3 newVector = Vector3.Cross(Axy, O7xy);
+            //if (cos > 1) cos = 1;
+            //else if (cos < -1) cos = -1;
+            //double returnValue = Math.Acos(cos) * (180 / Math.PI);
+
+            Vector3 crossVector = Vector3.Cross(Axy, O7xy);
+            double cross = crossVector.Length();
+            double aProjLength = O7xy.Length();
+            double bProjLength = Axy.Length();
+            double sin = cross / aProjLength / bProjLength;
+            if (sin > 1) sin = 1;
+            else if (sin < -1) sin = -1;
+            double returnValue = Math.Asin(sin) * (180 / Math.PI);
+            return Math.Sign(crossVector.Z) * returnValue;
         }
     }
 }

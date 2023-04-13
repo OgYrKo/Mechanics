@@ -214,30 +214,8 @@ namespace Controller
                         threads[i].Join();
                     }
 
-                    //////////////////////////////////////////////////////////////////////
-
-                    //double[] angles = new double[ELEMENTS_COUNT - 1];
-                    //Vector3 copy = GetEndPoint();
-                    //Vector3 endPoint = new Vector3(copy.X, copy.Y, copy.Z);
-                    //for (int i = 0; i < angles.Length; i++)
-                    //{
-                    //    angles[i] = elements[i].GoToPoint(item.centerPoint, endPoint);
-                    //    if (i < numerics.Count)
-                    //        numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angles[i]));
-                    //}
-
-                    //for (int i = 0; i < angles.Length; i++)
-                    //{
-                    //    if (angles[i] == 0) continue;
-                    //    Rotate(i, angles[i]);
-                    //    threads[i].Join();
-                    //}
-
-                    /////////////////////////////////////////////////////////////////
-
-
-
                     form.SetLoopCountLbl(++loopCount);
+
                 }
                 while (!brush.IsTouch(item))
                 {
