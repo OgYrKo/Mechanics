@@ -24,7 +24,6 @@ namespace Controller
         private const int cylindersCount = 3;
         private Degree sumAlpha = 0;
         private Mutex rotateMutex;
-        private readonly object paralelLock;
         private Mutex drawMutex;
         private Item item;
         public float Length { get => elementVector.Length(); }

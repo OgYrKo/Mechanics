@@ -20,6 +20,7 @@ namespace Controller
         const int numericLimit = 180;
         List<Thread> threads;
 
+        [Obsolete]
         public Form1()
         {
             InitializeComponent();
