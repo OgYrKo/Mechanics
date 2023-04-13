@@ -15,14 +15,13 @@ namespace Lab4
 
             words.Add(new Word("важкий", Order.First, State.Outside));
             words.Add(new Word("легкий", Order.First, State.Outside));
-            words.Add(new Word("дуже", Order.Second, State.Outside));
-            words.Add(new Word("занадто", Order.Second, State.Outside));
-            words.Add(new Word("досить", Order.Second, State.Outside));
-            words.Add(new Word("не", Order.Negative, State.Outside));
+            words.Add(new Word("дуже", Order.Second, State.None));
+            words.Add(new Word("занадто", Order.Second, State.None));
+            words.Add(new Word("досить", Order.Second, State.None));
+            words.Add(new Word("не", Order.Negative, State.None));
 
             Linguistics linguistics = new Linguistics(words, "предмет");
-            //StreamWriter sw = new StreamWriter(Console.Out);
-            linguistics.Result();
+            linguistics.Result(Console.Out);
         }
 
     }

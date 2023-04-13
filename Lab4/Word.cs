@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Lab4
 {
     public enum Order {First,Second,Negative}
-    public enum State {Outside,Inside}
+    public enum State {Outside,Inside,None}
 
     internal class Word
     {
