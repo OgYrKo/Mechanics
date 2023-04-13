@@ -16,7 +16,7 @@ namespace Controller
         private Mesh cylinder;
         private Material cylinderMaterial;
         private Element nextElement;
-        private Vector3 startPoint;
+        public Vector3 startPoint { get; private set; }
         public Vector3 endPoint { get; private set;}
         private Vector3 elementVector;
         private const float RADIUS = 0.05f;

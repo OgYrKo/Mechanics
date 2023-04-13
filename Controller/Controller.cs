@@ -197,27 +197,59 @@ namespace Controller
                 loopCount = 0;
                 Item item = typedTuple.Item1;
                 List<NumericUpDown> numerics = typedTuple.Item2;
-                while (!Vector3Extencion.Compare(GetEndPoint(), item.centerPoint))
+
+
+                while (!GetEndPoint().Equals(item.centerPoint))
                 {
                     for (int i = 0; i < ELEMENTS_COUNT - 1; i++)
                     {
 
-                        Vector3 copy = GetEndPoint();
-                        Vector3 endPoint = new Vector3(copy.X, copy.Y, copy.Z);
+                        Vector3 endPoint = GetEndPoint();
                         double angle = elements[i].GoToPoint(item.centerPoint, endPoint);
-                        if (i < numerics.Count)
-                        {
-                            numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angle));
-                        }
-                        if (angle == 0) continue;
+                        
+                        numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angle));
+                        
+                        if (angle == 0) 
+                            continue;
                         Rotate(i, angle);
                         threads[i].Join();
                     }
 
                     form.SetLoopCountLbl(++loopCount);
 
-                }
-                while (!brush.IsTouch(item))
+                    }
+
+                    ///////////////////////////////////////////////////////////////////
+                    ///
+
+
+                    //Vector3 searchPoint = item.centerPoint;
+                    //Vector3 endPoint = GetEndPoint();
+                    //double[] angles = new double[ELEMENTS_COUNT - 1];
+                    //while (!Vector3Extencion.Compare(endPoint, searchPoint))
+                    //{
+                    //    for (int i = 0; i < ELEMENTS_COUNT - 1; i++)
+                    //    {
+                    //        double angle = elements[i].GoToPoint(searchPoint, endPoint);
+                    //        if (angle == 0) continue;
+
+                    //        Space space = new Space(elements[i].startPoint, elements[i].endPoint);
+                    //        searchPoint = space.RotatePoints(new List<Vector3>() { searchPoint }, -angle)[0];
+                    //        angles[i] += angle;
+                    //    }
+
+                    //    form.SetLoopCountLbl(++loopCount);
+
+                    //}
+                    //for (int i = 0; i < ELEMENTS_COUNT - 1; i++)
+                    //{
+                    //    numerics[i].Invoke(new Action(() => numerics[i].Value = (int)angles[i]));
+                    //    Rotate(i, angles[i]);
+                    //}
+
+                    ///////////////////////////////////////////////////////////////////////
+
+                    while (!brush.IsTouch(item))
                 {
 
                     Rotate(ELEMENTS_COUNT, ROTATE_FREQUENCY);
