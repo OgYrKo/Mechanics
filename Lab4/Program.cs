@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,27 +11,19 @@ namespace Lab4
     {
         static void Main(string[] args)
         {
+            List<Word> words = new List<Word>();
 
-            List<string> input1 = new List<string>() {"важкий","легкий" };
-            List<string> input2 = new List<string>() { "дуже", "занадто", "досить" };
-            List<string> input3 = new List<string>() { "не" };
-            string mainWord = "предмет";
+            words.Add(new Word("важкий", Order.First, State.Outside));
+            words.Add(new Word("легкий", Order.First, State.Outside));
+            words.Add(new Word("дуже", Order.Second, State.Outside));
+            words.Add(new Word("занадто", Order.Second, State.Outside));
+            words.Add(new Word("досить", Order.Second, State.Outside));
+            words.Add(new Word("не", Order.Negative, State.Outside));
 
-            Linguistics linguistics = new Linguistics(input1, input2, input3,mainWord);
-            List<string> r1 = linguistics.FirstOrder();
-            List<string> r2 = linguistics.FirstAndSecondOrder();
-            List<string> r3 = linguistics.All();
-            Print(r1);
-            Print(r2);
-            Print(r3);
+            Linguistics linguistics = new Linguistics(words, "предмет");
+            //StreamWriter sw = new StreamWriter(Console.Out);
+            linguistics.Result();
         }
 
-        static void Print(List<string> strings)
-        {
-            foreach(string s in strings)
-            {
-                Console.WriteLine(s);
-            }
-        }
     }
 }

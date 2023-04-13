@@ -1,66 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using sw = System.Console;
 namespace Lab4
 {
     internal class Linguistics
     {
-        List<string> firstOrder;
-        List<string> secondOrder;
-        List<string> negative;
+
+        List<Word> words;
         string mainWord;
 
-        public Linguistics(List<string> firstOrder, List<string> secondOrder, List<string> negative, string mainWord)
+        public Linguistics(List<Word> words,string mainWord)
         {
-            this.firstOrder = firstOrder;
-            this.secondOrder = secondOrder;
-            this.negative = negative;
+            this.words = words;
             this.mainWord = mainWord;
         }
 
-        public List<string> FirstOrder()
+        public void AddWord(Word word)
         {
-            List<string>strings = new List<string>();
-            for(int i = 0; i < firstOrder.Count; i++)
-            {
-                strings.Add(firstOrder[i]+" "+mainWord);
-            }
-            return strings;
+            words.Add(word);
         }
 
-        public List<string> FirstAndSecondOrder()
+        public void Result()//StreamWriter sw)
         {
-            List<string> firstStrings = FirstOrder();
-            List<string> strings = new List<string>();
-
-            for (int j = 0; j < secondOrder.Count; j++)
+            
+            //вывести слово
+            sw.WriteLine(mainWord);
+            //цикл
+            for(int i = 0; i < words.Count; i++)
             {
-                strings.Add(secondOrder[j] + " " + firstStrings[0]);
-                if(firstStrings.Count - 1!=0)
-                strings.Add(secondOrder[j] + " " + firstStrings[firstStrings.Count-1]);
-            }
-
-            return strings;
-        }
-
-
-        public List<string> All()
-        {
-            List<string> secondStrings = FirstAndSecondOrder();
-            List<string> strings = new List<string>();
-
-            for (int i = 0; i < secondStrings.Count; i++)
-            {
-                for (int j = 0; j < negative.Count; j++)
+                if (words[i].order == Order.First)
                 {
-                    strings.Add(negative[j] + " " + secondStrings[i]);
+                    string firstOrder = words[i].ToString() + " " + mainWord;
+                    sw.WriteLine(firstOrder);
+                    if(words[i].state == State.Outside)
+                    {
+                        
+                        //найти переменную второго уровня
+                        //вывести ее с переменной и словом из первого уровня
+                        for(int j = 0; j < words.Count; j++)
+                        {
+                            if (words[j].order == Order.Second)
+                            {
+                                string secondOrder = words[j].ToString() + " " + firstOrder;
+                                sw.WriteLine(secondOrder);
+                                
+                                //найти переменную негативную
+                                //вывести ее с переменной и словом из первого уровня
+                                //вывести ее с переменной и словом из второго уровня
+                                for(int k=0; k < words.Count; k++)
+                                {
+                                    if (words[k].order == Order.Negative)
+                                    {
+                                        sw.WriteLine(words[k].ToString() + " " + firstOrder);
+                                        sw.WriteLine(words[k].ToString() + " " + secondOrder);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    else if(words[i].state == State.Inside)
+                    {
+                        //найти переменную негативную
+                        //вывести ее с переменной и словом из первого уровня
+                        for (int j = 0; j < words.Count; j++)
+                        {
+                            if (words[j].order == Order.Negative)
+                            {
+                                sw.WriteLine(words[j].ToString() + " " + firstOrder);
+                            }
+                        }
+                    }
                 }
             }
-            return strings;
         }
-
     }
 }
