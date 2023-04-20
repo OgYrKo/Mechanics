@@ -11,9 +11,9 @@ namespace Lab4
         List<int> negativeIndexes;
         int indexString;
 
-        public string mainWord { get; set; }
+        private Noun mainWord { get; set; }
 
-        public Linguistics(List<Word> words, string mainWord)
+        public Linguistics(List<Word> words, Noun mainWord)
         {
             this.words = words;
             this.mainWord = mainWord;
@@ -28,9 +28,9 @@ namespace Lab4
 
         private void SetOrderIndex(int index)
         {
-            if (words[index].order == Order.First) firstOrderIndexes.Add(index);
-            else if (words[index].order == Order.Second) secondOrderIndexes.Add(index);
-            else if (words[index].order == Order.Negative) negativeIndexes.Add(index);
+            if (words[index].Order == Order.First) firstOrderIndexes.Add(index);
+            else if (words[index].Order == Order.Second) secondOrderIndexes.Add(index);
+            else if (words[index].Order == Order.Negative) negativeIndexes.Add(index);
         }
 
         public void AddWord(Word word)
@@ -44,41 +44,45 @@ namespace Lab4
             indexString = 0;
             //вывести слово
             tw.WriteLine(++indexString + ") " + mainWord);
-            for (int i = 0; i < firstOrderIndexes.Count; i++)
+            foreach (int indexK in negativeIndexes)
             {
-                int indexI = firstOrderIndexes[i];
+                if (words[indexK].CanConnect(mainWord))
+                    tw.WriteLine(++indexString + ") " + words[indexK].ToString() + " " + mainWord);
+            }
 
+
+            foreach (int indexI in firstOrderIndexes)
+            {
+                if (!words[indexI].CanConnect(mainWord)) continue;
                 string firstOrder = words[indexI].ToString() + " " + mainWord;
                 tw.WriteLine(++indexString + ") " + firstOrder);
 
                 //вывести негативные переменные с переменной и словом из первого уровня
-                for (int k = 0; k < negativeIndexes.Count; k++)
+                foreach (int indexK in negativeIndexes)
                 {
-                    int indexK = negativeIndexes[k];
+                    if (!words[indexK].CanConnect(words[indexI])) continue;
                     tw.WriteLine(++indexString + ") " + words[indexK].ToString() + " " + firstOrder);
                 }
-                if (words[indexI].state == State.Outside)
+
+                //вывести переменную второго уровня с переменной и словом из первого уровня
+                foreach (int indexJ in secondOrderIndexes)
                 {
+                    if (!words[indexJ].CanConnect(words[indexI])) continue;
+                    string secondOrder = words[indexJ].ToString() + " " + firstOrder;
+                    tw.WriteLine(++indexString + ") " + secondOrder);
 
-                    //вывести переменную второго уровня с переменной и словом из первого уровня
-                    for (int j = 0; j < secondOrderIndexes.Count; j++)
+                    //негативная переменная
+                    //вывести ее с переменной и словом из первого уровня
+                    //вывести ее с переменной и словом из второго уровня
+                    foreach(int indexK in negativeIndexes)
                     {
-                        int indexJ = secondOrderIndexes[j];
-                        string secondOrder = words[indexJ].ToString() + " " + firstOrder;
-                        tw.WriteLine(++indexString + ") " + secondOrder);
-
-                        //негативная переменная
-                        //вывести ее с переменной и словом из первого уровня
-                        //вывести ее с переменной и словом из второго уровня
-                        for (int k = 0; k < negativeIndexes.Count; k++)
-                        {
-                            int indexK = negativeIndexes[k];
-                            tw.WriteLine(++indexString + ") " + words[indexK].ToString() + " " + secondOrder);
-                        }
-
+                        if (!words[indexK].CanConnect(words[indexJ])) continue;
+                        tw.WriteLine(++indexString + ") " + words[indexK].ToString() + " " + secondOrder);
                     }
+
                 }
-                
+
+
             }
         }
     }
