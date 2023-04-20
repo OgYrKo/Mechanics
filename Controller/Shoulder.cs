@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
-using System.Xml.Schema;
 
 namespace Controller
 {
@@ -68,34 +67,6 @@ namespace Controller
         {
             Space s = new Space(startPoint,endPoint);
             return s.GetAngle(point,controllerEndPoint);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vector"></param>
-        /// <returns>-1 при ошибке или индекс координаты вектора (начинается с 0), которая должна быть 0</returns>
-        private int GetPlane(in Vector3 vector)
-        {
-            Vector3 new_vector = vector;
-            new_vector.X = 0;
-            if (new_vector.Length() == vector.Length())
-            {
-                return 0;
-            }
-            new_vector.X=vector.X;
-            new_vector.Y = 0;
-            if (new_vector.Length() == vector.Length())
-            {
-                return 1;
-            }
-            new_vector.Y = vector.Y;
-            new_vector.Z = 0;
-            if (new_vector.Length() == vector.Length())
-            {
-                return 2;
-            }
-            return -1;
         }
 
         public void Rotate(Degree alpha)

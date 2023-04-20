@@ -3,13 +3,7 @@ using Microsoft.DirectX.Direct3D;
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using System.Threading;
-using System.Net;
-using System.Reflection;
 
 namespace Controller
 {
@@ -27,6 +21,7 @@ namespace Controller
         object paralelLock;
         Thread[] threads;
         int loopCount;
+        double controllerLength;
 
         public Controller(Form1 form, Device device)
         {
@@ -89,6 +84,7 @@ namespace Controller
                 else if (i == elements.Length - 1) elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, brush);
                 else elements[i] = new Shoulder(device, new Vector3(x, y, z), cylinderEndPoint, elements[i + 1]);
             }
+            controllerLength = (brush.endPoint - elements[0].endPoint).Length();
         }
 
         private void MutexInit()
@@ -261,7 +257,7 @@ namespace Controller
 
         public void GoToItem(Item item, ref List<NumericUpDown> numerics)
         {
-            if ((item.centerPoint-elements[0].endPoint).Length() -(brush.endPoint- elements[0].endPoint).Length() > 0)
+            if ((item.centerPoint-elements[0].endPoint).Length() - controllerLength > 0)
             {
                 MessageBox.Show("Точка вне зоны досегаемости!", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;

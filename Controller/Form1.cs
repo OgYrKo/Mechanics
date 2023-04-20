@@ -3,7 +3,6 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Printing;
 using System.Threading;
 using System.Windows.Forms;
 

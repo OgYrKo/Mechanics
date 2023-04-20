@@ -124,24 +124,12 @@ namespace Controller
             if (cos_theta == -2) cos_theta = Math.Cos(theta);
         }
 
-        private Degree ConvertRadianToDegree(double radian) => radian * 180 / Math.PI;
-
         public Degree GetAngle(Vector3 A, Vector3 O7)
         {
             Vector3 Axy = ToUpperSystem(A-translation);
             Axy.Z = 0;
             Vector3 O7xy = ToUpperSystem(O7 - translation);
             O7xy.Z = 0;
-
-
-            //double scalar = Vector3.Dot(O7xy, Axy);
-            //double aProjLength = O7xy.Length();
-            //double bProjLength = Axy.Length();
-            //double cos = scalar / aProjLength / bProjLength;
-            //Vector3 newVector = Vector3.Cross(Axy, O7xy);
-            //if (cos > 1) cos = 1;
-            //else if (cos < -1) cos = -1;
-            //double returnValue = Math.Acos(cos) * (180 / Math.PI);
 
             Vector3 crossVector = Vector3.Cross(Axy, O7xy);
             double cross = crossVector.Length();

@@ -3,7 +3,6 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 
 namespace Controller
@@ -112,11 +111,6 @@ namespace Controller
             return true;
         }
 
-        public Degree GoToPoint(Vector3 point, Vector3 O)
-        {
-            return 0;
-        }
-        
         //поворачивает сами пальцы
         public void Rotate(Degree alpha)
         {
