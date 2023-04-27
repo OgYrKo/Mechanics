@@ -8,7 +8,7 @@ namespace Lab4
 {
     public enum Order {Zero,First,Second,Negative}
     public enum State {Outside,Inside}
-    public enum Degree {Normal, More }
+    public enum ComparisonDegree {Normal, More }
 
     internal abstract class Word
     {
@@ -33,23 +33,26 @@ namespace Lab4
     {
         public Noun(string word) : base(word, Order.Zero) { }
 
-        public override bool CanConnect(Word word) => false;
+        public override bool CanConnect(Word word) => true;
     }
 
     internal class Adjective : Word
     {
-        public State State { get; private set; }
+        private State state;
 
         public Adjective(string word, State state) : base(word, Order.First)
         {
-            State = state;
+            this.state = state;
         }
 
         public override bool CanConnect(Word word)
         {
             switch (word.Order)
             {
-                case Order.Zero:
+                case Order.Second:
+                    if (state == State.Outside) return true;
+                    else return false;
+                case Order.Negative:
                     return true;
                 default:
                     return false;
@@ -59,15 +62,18 @@ namespace Lab4
 
     internal class Adverb : Word
     {
-        Degree degree;
-        public Adverb(string word, Degree degree) : base(word, Order.Second) { }
+        private ComparisonDegree degree;
+        public Adverb(string word, ComparisonDegree degree) : base(word, Order.Second) 
+        {
+            this.degree = degree;
+        }
 
         public override bool CanConnect(Word word)
         {
             switch (word.Order)
             {
-                case Order.First:
-                    if ((word as Adjective).State == State.Outside) return true;
+                case Order.Negative:
+                    if (degree== ComparisonDegree.Normal) return true;
                     else return false;
                 default: 
                     return false;
@@ -79,7 +85,7 @@ namespace Lab4
     {
         public Pronoun(string word) : base(word, Order.Negative) { }
 
-        public override bool CanConnect(Word word) => true;
+        public override bool CanConnect(Word word) => false;
     }
 
 }

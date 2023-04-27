@@ -15,12 +15,14 @@ namespace Lab4
 
             words.Add(new Adjective("важкий", State.Outside));
             words.Add(new Adjective("легкий", State.Outside));
-            words.Add(new Adverb("дуже",Degree.Normal));
-            words.Add(new Adverb("занадто", Degree.More));
-            words.Add(new Adverb("досить", Degree.More));
+            words.Add(new Adverb("дуже",ComparisonDegree.Normal));
+            words.Add(new Adverb("занадто", ComparisonDegree.More));
+            words.Add(new Adverb("досить", ComparisonDegree.More));
             words.Add(new Pronoun("не"));
+            words.Add(new Noun("предмет"));
+            words.Add(new Noun("рюкзак"));
 
-            Linguistics linguistics = new Linguistics(words, new Noun("предмет"));
+            Linguistics linguistics = new Linguistics(words);
             linguistics.Result(Console.Out);
         }
 
